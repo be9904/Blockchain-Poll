@@ -59,6 +59,7 @@ while True:
         # print(receivedMessage)
         break
 
+    # log server reply
     print('Server:', receivedMessage)
     print('--------------------')
 
