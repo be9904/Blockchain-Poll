@@ -1,8 +1,10 @@
 from socket import *
 
+# login msg func
 def login_msg(id, pw):
     return 'li ' + id + ' ' + pw
 
+# register msg func
 def register_msg(id, pw):
     return 'r ' + id + ' ' + pw
 
