@@ -81,12 +81,13 @@ class LocalClient:
                 break
 
             # log server reply
-            print('Server:', receivedMessage)
-            print('--------------------')
+            print('----------------------')
+            print(' <Server>', receivedMessage)
+            print('----------------------')
 
         clientSocket.close()
 
-#################### Client App Test Run #######################
+#################### Client main Test Run #######################
 
 client = LocalClient()
 client.client_main()
