@@ -1,6 +1,7 @@
 from socket import *
 
 class LocalClient:
+    # constructor
     def __init__(self):
         # set server ip and port
         self.serverIP = '127.0.0.1'      # local host
@@ -87,7 +88,11 @@ class LocalClient:
 
         clientSocket.close()
 
-#################### Client main Test Run #######################
+####################################################################
+####################################################################
+####################################################################
+
+###################### Client main Test Run ########################
 
 client = LocalClient()
 client.client_main()

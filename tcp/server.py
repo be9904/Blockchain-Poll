@@ -2,6 +2,7 @@ from socket import *
 import json
 
 class LocalServer:
+    # constructor
     def __init__(self):
         # load server data from json
         self.user_json = open('./registered-users.json')
@@ -42,6 +43,9 @@ class LocalServer:
             json.dump(self.registered_users, user_json)
             return True        
 
+    ####################################################################
+    ######################## Main Server App ###########################
+    ####################################################################
     def server_main(self):
         # create socket
         serverSocket = socket(AF_INET, SOCK_STREAM)
@@ -101,7 +105,7 @@ class LocalServer:
                     break
 
                 ####################################################################
-                ######################### Disconnect ###############################
+                ###################### Disconnect Client ###########################
                 ####################################################################
                 elif data == 'disconnect':
                     # return msg and log
@@ -122,7 +126,7 @@ class LocalServer:
                     break
 
                 ####################################################################
-                ###################### Login, Logout, Register #####################
+                ##################### Login, Logout, Register ######################
                 ####################################################################
                 else:
                     # split client msg into tokens
@@ -182,6 +186,11 @@ class LocalServer:
             if serverOpen is False:
                 break
 
-################### Server main Test Run ########################
+####################################################################
+####################################################################
+####################################################################
+
+##################### Server main Test Run #########################
+
 server = LocalServer()
 server.server_main()
