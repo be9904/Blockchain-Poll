@@ -1,4 +1,3 @@
-from http import client
 from socket import *
 
 # start screen as function
