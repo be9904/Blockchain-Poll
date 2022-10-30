@@ -1,5 +1,11 @@
 from socket import *
 
+def login_msg(id, pw):
+    return 'li ' + id + ' ' + pw
+
+def register_msg(id, pw):
+    return 'r ' + id + ' ' + pw
+
 # set server ip and port
 serverIP = '127.0.0.1'      # local host
 serverPort = 12000
@@ -18,18 +24,15 @@ while True:
     if action == 1:
         user_id = input('ID : ')
         user_pw = input('PW : ')
-        msg = 'li ' + user_id + ' ' + user_pw
-        clientSocket.send(msg.encode())
+        clientSocket.send(login_msg(user_id, user_pw).encode())
     # logout
     elif action == 2:
-        msg = 'logout'
-        clientSocket.send(msg.encode())
+        clientSocket.send('logout'.encode())
     # register
     elif action == 3:
         user_id = input('ID : ')
         user_pw = input('PW : ')
-        msg = 'r ' + user_id + ' ' + user_pw
-        clientSocket.send(msg.encode())
+        clientSocket.send(register_msg(user_id, user_pw).encode())
     # exit
     elif action == 4:
         clientSocket.send('disconnect'.encode())
