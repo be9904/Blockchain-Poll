@@ -8,31 +8,54 @@ class LocalServer:
         self.user_json = open('./registered-users.json')
         self.registered_users = json.load(self.user_json)
 
-        # open server
+        # initial server settings
         self.serverHost = '127.0.0.1'
         self.serverPort = 12000
+        self.connectionSocket = None
+        
+        # set server and connection booleans
+        self.serverOpen = True       # is server running?
+        self.isConnected = False     # is client connected?
+        
+        # define currently logged in id
+        self.curUser = None       
+
+    # handle client request
+    def handle_request(self):
+        pass
 
     # login check function
-    def trylogin(self, username, password):   
+    def try_login(self, username, password):   
         # not registered
         if self.registered_users.get(username) is None:
             return (False, '가입되어 있지 않은 아이디입니다')
         
         # login success
         if self.registered_users[username] == password:
+            self.curUser = username
             return (True, '로그인 성공')
         
         return (False, '비밀번호를 확인해주세요')
+    
+    def try_logout(self):
+        # logout
+        if self.curUser != None:
+            logout_user = self.curUser
+            self.curUser = None
+            return (True, '로그아웃 됨: ' + logout_user)
+        # try logout when not logged in
+        elif self.curUser == None:
+            return (False, '로그인 되어 있지 않습니다')
 
     # register check function
-    def tryregister(self, username, password):
+    def try_register(self, username, password):
         # check id pw validity
         if username == None or password == None:
-            return False
+            return (False, '사용할 수 없는 아이디 또는 비밀번호입니다')
 
         # already registered
         if self.registered_users.get(username) is not None:
-            return False
+            return (False, '이미 가입되어 있는 아이디입니다')
         # register new user
         else:
             # open json as write mode
@@ -43,7 +66,8 @@ class LocalServer:
             
             # update json
             json.dump(self.registered_users, user_json)
-            return True        
+            self.curUser = username
+            return (True, '가입 성공')
 
     ####################################################################
     ######################## Main Server App ###########################
@@ -65,24 +89,17 @@ class LocalServer:
         print('server is listening')
         print('------------------------------')
 
-        # set server and connection booleans
-        serverOpen = True       # is server running?
-        isConnected = False     # is client connected?
-
-        # define logged in id
-        curUser = None
-
         while True:
             # connect client if none is connected
-            if isConnected is False:
-                connectionSocket, addr = serverSocket.accept()
-                isConnected = True
+            if self.isConnected is False:
+                self.connectionSocket, addr = serverSocket.accept()
+                self.isConnected = True
                 print(addr,'has connected')
 
             # run server
             while True:
                 # receive message from client, log
-                data = connectionSocket.recv(1024)
+                data = self.connectionSocket.recv(1024)
                 print('message received from', addr)
 
                 # decode received data
@@ -97,13 +114,13 @@ class LocalServer:
                     print('closing server... goodbye')
 
                     # set server boolean
-                    serverOpen = False
+                    self.serverOpen = False
 
                     # send reply to client
-                    connectionSocket.send(return_msg.encode())
+                    self.connectionSocket.send(return_msg.encode())
 
                     # close socket connection
-                    connectionSocket.close()
+                    self.connectionSocket.close()
                     break
 
                 ####################################################################
@@ -115,16 +132,16 @@ class LocalServer:
                     print(addr,'has disconnected from server')
 
                     # logout
-                    curUser = None
+                    self.curUser = None
 
                     # set connection boolean
-                    isConnected = False
+                    self.isConnected = False
                     
                     # send reply to client
-                    connectionSocket.send(return_msg.encode())
+                    self.connectionSocket.send(return_msg.encode())
 
                     # close socket connection
-                    connectionSocket.close()
+                    self.connectionSocket.close()
                     break
 
                 ####################################################################
@@ -137,15 +154,12 @@ class LocalServer:
                     ############################ Logout ################################
 
                     # logout
-                    if data[0] == 'logout' and curUser != None:
-                        return_msg = '로그아웃 됨: ' + curUser
-                        curUser = None
-                    # try logout when not logged in
-                    elif data[0] == 'logout' and curUser == None:
-                        return_msg = '로그인 되어 있지 않습니다'
+                    if data[0] == 'logout':
+                        _trylogout = self.try_logout();
+                        return_msg = _trylogout[1]
                     # client msg in wrong format
                     elif len(data) != 3:
-                        print('check client msg format')
+                        print('wrong client msg format')
                         return_msg = '잘못된 형식입니다'
                         continue
 
@@ -155,36 +169,29 @@ class LocalServer:
                     print('client msg:', data)
 
                     # not logged in
-                    if curUser == None:
+                    if self.curUser == None:
                         # login
                         if data[0] == 'li':
                             # try login and set ret msg
-                            _trylogin = self.trylogin(data[1], data[2])
+                            _trylogin = self.try_login(data[1], data[2])
                             return_msg = _trylogin[1]
-                            # login success, update currently logged in user
-                            if _trylogin[0]:
-                                curUser = data[1]
                         # register
                         if data[0] == 'r':
-                            # log in if register success
-                            if self.tryregister(data[1], data[2]):
-                                return_msg = '가입 성공'
-                                curUser = data[1]
-                            # id exists
-                            else:
-                                return_msg = '이미 존재하는 아이디입니다'
+                            # try register and set ret msg
+                            _tryregister = self.try_register(data[1], data[2])
+                            return_msg = _tryregister[1]
                     # already logged in
                     else:
-                        return_msg = '이미 로그인 되어 있습니다. (' + curUser + ')'
+                        return_msg = '이미 로그인 되어 있습니다. (' + self.curUser + ')'
 
                     ####################### Reply to Client ############################
                     
                     # send reply to client
-                    connectionSocket.send(return_msg.encode())
+                    self.connectionSocket.send(return_msg.encode())
                     print('------------------------------')
             
             # if server close requested, terminate program
-            if serverOpen is False:
+            if self.serverOpen is False:
                 break
 
 ####################################################################
