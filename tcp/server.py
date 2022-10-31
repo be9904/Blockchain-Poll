@@ -12,6 +12,7 @@ class LocalServer:
         self.serverHost = '127.0.0.1'
         self.serverPort = 12000
         self.connectionSocket = None
+        self.addr = None
         
         # set server and connection booleans
         self.serverOpen = True       # is server running?
@@ -22,7 +23,103 @@ class LocalServer:
 
     # handle client request
     def handle_request(self):
-        pass
+        # run server
+        while True:
+            # receive message from client, log
+            data = self.connectionSocket.recv(1024)
+            print('message received from', self.addr)
+
+            # decode received data
+            data = data.decode()
+
+            ####################################################################
+            ######################## Close Server ##############################
+            ####################################################################
+            if data == 'close server':
+                # return msg and log
+                return_msg = 'close@' + str(self.serverPort)
+                print('closing server... goodbye')
+
+                # set server boolean
+                self.serverOpen = False
+
+                # send reply to client
+                self.connectionSocket.send(return_msg.encode())
+
+                # close socket connection
+                self.connectionSocket.close()
+                break
+
+            ####################################################################
+            ###################### Disconnect Client ###########################
+            ####################################################################
+            elif data == 'disconnect':
+                # return msg and log
+                return_msg = 'disconnect@' + str(self.serverPort)
+                print(self.addr,'has disconnected from server')
+
+                # logout
+                self.curUser = None
+
+                # set connection boolean
+                self.isConnected = False
+                
+                # send reply to client
+                self.connectionSocket.send(return_msg.encode())
+
+                # close socket connection
+                self.connectionSocket.close()
+                break
+
+            ####################################################################
+            ##################### Login, Logout, Register ######################
+            ####################################################################
+            else:
+                # split client msg into tokens
+                data = data.split()
+
+                ############################ Logout ################################
+
+                # logout
+                if data[0] == 'logout':
+                    _trylogout = self.try_logout();
+                    return_msg = _trylogout[1]
+                # client msg in wrong format
+                elif len(data) != 3:
+                    print('wrong client msg format')
+                    return_msg = '잘못된 형식입니다'
+                    continue
+
+                ######################## Login/Register ############################
+                
+                # check client msg encoding (will be removed)
+                print('client msg:', data)
+
+                # not logged in
+                if self.curUser == None:
+                    # login
+                    if data[0] == 'li':
+                        # try login and set ret msg
+                        _trylogin = self.try_login(data[1], data[2])
+                        return_msg = _trylogin[1]
+                    # register
+                    if data[0] == 'r':
+                        # try register and set ret msg
+                        _tryregister = self.try_register(data[1], data[2])
+                        return_msg = _tryregister[1]
+                # already logged in
+                else:
+                    return_msg = '이미 로그인 되어 있습니다. (' + self.curUser + ')'
+
+                ####################### Reply to Client ############################
+                
+                # send reply to client
+                self.connectionSocket.send(return_msg.encode())
+                print('------------------------------')
+        
+        # if server close requested, terminate program
+        if self.serverOpen is False:
+            return
 
     # login check function
     def try_login(self, username, password):   
@@ -89,110 +186,15 @@ class LocalServer:
         print('server is listening')
         print('------------------------------')
 
+        # accept client connection
         while True:
             # connect client if none is connected
             if self.isConnected is False:
-                self.connectionSocket, addr = serverSocket.accept()
+                self.connectionSocket, self.addr = serverSocket.accept()
                 self.isConnected = True
-                print(addr,'has connected')
-
-            # run server
-            while True:
-                # receive message from client, log
-                data = self.connectionSocket.recv(1024)
-                print('message received from', addr)
-
-                # decode received data
-                data = data.decode()
-
-                ####################################################################
-                ######################## Close Server ##############################
-                ####################################################################
-                if data == 'close server':
-                    # return msg and log
-                    return_msg = 'close@' + str(self.serverPort)
-                    print('closing server... goodbye')
-
-                    # set server boolean
-                    self.serverOpen = False
-
-                    # send reply to client
-                    self.connectionSocket.send(return_msg.encode())
-
-                    # close socket connection
-                    self.connectionSocket.close()
-                    break
-
-                ####################################################################
-                ###################### Disconnect Client ###########################
-                ####################################################################
-                elif data == 'disconnect':
-                    # return msg and log
-                    return_msg = 'disconnect@' + str(self.serverPort)
-                    print(addr,'has disconnected from server')
-
-                    # logout
-                    self.curUser = None
-
-                    # set connection boolean
-                    self.isConnected = False
-                    
-                    # send reply to client
-                    self.connectionSocket.send(return_msg.encode())
-
-                    # close socket connection
-                    self.connectionSocket.close()
-                    break
-
-                ####################################################################
-                ##################### Login, Logout, Register ######################
-                ####################################################################
-                else:
-                    # split client msg into tokens
-                    data = data.split()
-
-                    ############################ Logout ################################
-
-                    # logout
-                    if data[0] == 'logout':
-                        _trylogout = self.try_logout();
-                        return_msg = _trylogout[1]
-                    # client msg in wrong format
-                    elif len(data) != 3:
-                        print('wrong client msg format')
-                        return_msg = '잘못된 형식입니다'
-                        continue
-
-                    ######################## Login/Register ############################
-                    
-                    # check client msg encoding (will be removed)
-                    print('client msg:', data)
-
-                    # not logged in
-                    if self.curUser == None:
-                        # login
-                        if data[0] == 'li':
-                            # try login and set ret msg
-                            _trylogin = self.try_login(data[1], data[2])
-                            return_msg = _trylogin[1]
-                        # register
-                        if data[0] == 'r':
-                            # try register and set ret msg
-                            _tryregister = self.try_register(data[1], data[2])
-                            return_msg = _tryregister[1]
-                    # already logged in
-                    else:
-                        return_msg = '이미 로그인 되어 있습니다. (' + self.curUser + ')'
-
-                    ####################### Reply to Client ############################
-                    
-                    # send reply to client
-                    self.connectionSocket.send(return_msg.encode())
-                    print('------------------------------')
+                print(self.addr,'has connected')
             
-            # if server close requested, terminate program
-            if self.serverOpen is False:
-                break
+            self.handle_request()
 
 ####################################################################
 ####################################################################
