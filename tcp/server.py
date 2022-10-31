@@ -19,7 +19,52 @@ class LocalServer:
         self.isConnected = False     # is client connected?
         
         # define currently logged in id
-        self.curUser = None       
+        self.curUser = None
+
+    # login check function
+    def try_login(self, username, password):   
+        # not registered
+        if self.registered_users.get(username) is None:
+            return (False, '가입되어 있지 않은 아이디입니다')
+        
+        # login success
+        if self.registered_users[username] == password:
+            self.curUser = username
+            return (True, '로그인 성공')
+        
+        return (False, '비밀번호를 확인해주세요')
+    
+    def try_logout(self):
+        # logout
+        if self.curUser != None:
+            logout_user = self.curUser
+            self.curUser = None
+            return (True, '로그아웃 됨: ' + logout_user)
+        # try logout when not logged in
+        elif self.curUser == None:
+            return (False, '로그인 되어 있지 않습니다')
+
+    # register check function
+    def try_register(self, username, password):
+        # check id pw validity
+        if username == None or password == None:
+            return (False, '사용할 수 없는 아이디 또는 비밀번호입니다')
+
+        # already registered
+        if self.registered_users.get(username) is not None:
+            return (False, '이미 가입되어 있는 아이디입니다')
+        # register new user
+        else:
+            # open json as write mode
+            user_json = open('./registered-users.json', 'w')
+            
+            # add new user info
+            self.registered_users[username] = password
+            
+            # update json
+            json.dump(self.registered_users, user_json)
+            self.curUser = username
+            return (True, '가입 성공')
 
     # handle client request
     def handle_request(self):
@@ -116,56 +161,7 @@ class LocalServer:
                 # send reply to client
                 self.connectionSocket.send(return_msg.encode())
                 print('------------------------------')
-        
-        # if server close requested, terminate program
-        if self.serverOpen is False:
-            return
-
-    # login check function
-    def try_login(self, username, password):   
-        # not registered
-        if self.registered_users.get(username) is None:
-            return (False, '가입되어 있지 않은 아이디입니다')
-        
-        # login success
-        if self.registered_users[username] == password:
-            self.curUser = username
-            return (True, '로그인 성공')
-        
-        return (False, '비밀번호를 확인해주세요')
     
-    def try_logout(self):
-        # logout
-        if self.curUser != None:
-            logout_user = self.curUser
-            self.curUser = None
-            return (True, '로그아웃 됨: ' + logout_user)
-        # try logout when not logged in
-        elif self.curUser == None:
-            return (False, '로그인 되어 있지 않습니다')
-
-    # register check function
-    def try_register(self, username, password):
-        # check id pw validity
-        if username == None or password == None:
-            return (False, '사용할 수 없는 아이디 또는 비밀번호입니다')
-
-        # already registered
-        if self.registered_users.get(username) is not None:
-            return (False, '이미 가입되어 있는 아이디입니다')
-        # register new user
-        else:
-            # open json as write mode
-            user_json = open('./registered-users.json', 'w')
-            
-            # add new user info
-            self.registered_users[username] = password
-            
-            # update json
-            json.dump(self.registered_users, user_json)
-            self.curUser = username
-            return (True, '가입 성공')
-
     ####################################################################
     ######################## Main Server App ###########################
     ####################################################################
@@ -194,7 +190,12 @@ class LocalServer:
                 self.isConnected = True
                 print(self.addr,'has connected')
             
+            # handle client request
             self.handle_request()
+            
+            # if server close requested, terminate program
+            if self.serverOpen is False:
+                return
 
 ####################################################################
 ####################################################################
