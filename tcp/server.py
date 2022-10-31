@@ -16,11 +16,13 @@ class LocalServer:
     def trylogin(self, username, password):   
         # not registered
         if self.registered_users.get(username) is None:
-            return False
+            return (False, '가입되어 있지 않은 아이디입니다')
         
         # login success
         if self.registered_users[username] == password:
-            return True    
+            return (True, '로그인 성공')
+        
+        return (False, '비밀번호를 확인해주세요')
 
     # register check function
     def tryregister(self, username, password):
@@ -156,13 +158,12 @@ class LocalServer:
                     if curUser == None:
                         # login
                         if data[0] == 'li':
-                            # success
-                            if self.trylogin(data[1], data[2]):
-                                return_msg = '로그인 성공'
+                            # try login and set ret msg
+                            _trylogin = self.trylogin(data[1], data[2])
+                            return_msg = _trylogin[1]
+                            # login success, update currently logged in user
+                            if _trylogin[0]:
                                 curUser = data[1]
-                            # fail
-                            else:
-                                return_msg = '로그인 실패'
                         # register
                         if data[0] == 'r':
                             # log in if register success
