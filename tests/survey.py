@@ -3,18 +3,35 @@ class Survey:
         self.name = name
         self.thumbnail = ""
         self.description = ""
-        self.questions = []
+        self.questions = IndexedLinkedList()
         
     def set_thumbnail(self, link):
         self.thumbnail = link
         
-    
+    def set_description(self, description):
+        self.description = description
+        
+    def add_question(self, question):
+        # if type(question) is not SurveyQuestion:
+        #     print('type \'SurveyQuestion\' is required')
+        #     return
+        
+        self.questions.append(question)
         
 class SurveyQuestion:
-    def __init__(self):
-        self.question = ""
-        self.answer = []
+    def __init__(self, question):
+        self.question = question
+        if type(question) is not str:
+            self.question = ""
+        self.answer = {}
         self.userChoice = 0
+        
+    def append(self, choice):
+        if type(choice) is not str:
+            print('type \'str\' is required')
+            return
+        id = len(self.answer)-1 if len(self.answer) > 0 else 0
+        self.answer[id] = choice
 
 ###################################################################
 ######################### Data Structure ##########################
@@ -33,12 +50,9 @@ class Node:
         self.nextVal = node
     
 class IndexedLinkedList:
-    def __init__(self, node):
-        if type(node) is not Node:
-            print('input node only')
-            return
-        self.head = node
+    def __init__(self):
         self.length = 1
+        self.head = None
         
     # for debugging purposes only
     def print_llist(self):
@@ -59,12 +73,12 @@ class IndexedLinkedList:
             
         # return if input node is not of type Node
         if type(node) is not Node:
-            print('input node only')
+            print('append:','input node only')
             return    
         
         # return if given index is out of bounds
         if index > self.length-1:
-            print('index out of bounds')
+            print('append:','index out of bounds')
             return
         
         # traverse through llist
@@ -73,7 +87,7 @@ class IndexedLinkedList:
         
         # exception handling
         if curNode == None:
-            print('check llist pointers')
+            print('append:','check llist pointers')
             return
         
         # append item and update llist
@@ -86,23 +100,33 @@ class IndexedLinkedList:
         self.length += 1
         
         
-a = Node(3)
-b = Node(5)
-c = Node(8)
-d = Node(19)
-e = Node(88)
+# a = Node(3)
+# b = Node(5)
+# c = Node(8)
+# d = Node(19)
+# e = Node(88)
 
-llist = IndexedLinkedList(a)
-llist.print_llist()
+# llist = IndexedLinkedList(a)
+# llist.print_llist()
 
-llist.append(b)
-llist.print_llist()
+# llist.append(b)
+# llist.print_llist()
 
-llist.append(c)
-llist.print_llist()
+# llist.append(c)
+# llist.print_llist()
 
-llist.append(d, 1)
-llist.print_llist()
+# llist.append(d, 1)
+# llist.print_llist()
 
-llist.append(e, 1)
-llist.print_llist()
+# llist.append(e, 1)
+# llist.print_llist()
+
+survey = Survey('Test')
+q1 = Node(SurveyQuestion('Hello?'))
+q2 = Node(SurveyQuestion('Hi?'))
+
+survey.add_question(q1)
+survey.add_question(q2)
+
+# for q in survey.questions:
+#     print(q.question)
