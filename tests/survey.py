@@ -67,6 +67,10 @@ class IndexedLinkedList:
     def append(self, node, index=None):
         curNode = self.head
         
+        if curNode is None:
+            self.head = node
+            return
+        
         # set default index to last item of llist
         if index == None:
             index = self.length-1
@@ -127,6 +131,8 @@ q2 = Node(SurveyQuestion('Hi?'))
 
 survey.add_question(q1)
 survey.add_question(q2)
+
+survey.questions.print_llist()
 
 # for q in survey.questions:
 #     print(q.question)
