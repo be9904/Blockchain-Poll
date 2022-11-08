@@ -51,25 +51,32 @@ class IndexedLinkedList:
         print()
         
     def append(self, node, index=None):
+        curNode = self.head
+        
+        # set default index to last item of llist
         if index == None:
             index = self.length-1
             
+        # return if input node is not of type Node
         if type(node) is not Node:
             print('input node only')
-            return
-            
-        curNode = self.head
+            return    
         
+        # return if given index is out of bounds
         if index > self.length-1:
             print('index out of bounds')
             return
         
+        # traverse through llist
         while curNode.index < index:
             curNode = curNode.nextVal
         
+        # exception handling
         if curNode == None:
+            print('check llist pointers')
             return
         
+        # append item and update llist
         node.nextVal = curNode.nextVal
         if curNode.nextVal is not None:
             curNode.nextVal.index += 1
