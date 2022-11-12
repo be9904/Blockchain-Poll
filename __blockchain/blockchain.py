@@ -1,62 +1,112 @@
-import datetime
-import hashlib
-import json
+from datetime import datetime
+from hashlib import sha256
 
-class BlockChain():
+class Block:
+    def __init__(self, transactions, previous_hash, nonce = 0):
+        self.timestamp = datetime.now()
+        self.transactions = transactions
+        self.previous_hash = previous_hash
+        self.nonce = nonce
+        self.hash = self.generate_hash()
 
-    def __init__(self, init):
+    def print_block(self):
+        # prints block contents
+        print("timestamp:", self.timestamp)
+        print("transactions:", self.transactions)
+        print("current hash:", self.generate_hash())
+
+    def generate_hash(self):
+        # hash the blocks contents
+        block_contents = str(self.timestamp) + str(self.transactions) + str(self.previous_hash) + str(self.nonce)
+        block_hash = sha256(block_contents.encode())
+        return block_hash.hexdigest()
+
+class Blockchain:
+    def __init__(self):
         self.chain = []
-        if init != None:
-            self.add_block(init)
+        # self.all_transactions = []
+        self.genesis_block()
     
-    # add block and append to chain
-    def add_block(self, proof, previous_hash):
-        block = {
-            "index" : len(self.chain) + 1,
-            'timestamp' : str(datetime.datetime.now()),
-            'proof' : proof,
-            'previous_hash' : previous_hash
-        }
-        self.chain.append(block)
-        return block
-    
-    # proof of work
-    def proof_of_work(self, previous_proof):
-        new_proof = 1
-        check_proof = False
+    def genesis_block(self):
+        if len(self.chain) == 0:
+            transactions = []
+            block = Block(transactions, 0)
+            self.chain.append(block)
+            return self.chain
 
-        while check_proof is False:
-            hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest()
-            if hash_operation[:5] == '00000':
-                check_proof = True
-            else:
-                new_proof += 1
-        
-        return new_proof
-    
-    # generate hash
-    def hash(self, block):
-        encoded_block = json.dumps(block, sort_keys=True).encode()
-        return hashlib.sha256(encoded_block).hexdigest()
-    
-    # check chain validity
-    def is_chain_valid(self, chain):
-        previous_block = chain[0]
-        block_index = 1
+    # prints contents of blockchain
+    def print_blocks(self):
+        for i in range(len(self.chain)):
+            current_block = self.chain[i]
+            print("Block {} {}".format(i, current_block))
+            current_block.print_block()
 
-        while block_index < len(chain):
-            block = chain[block_index]
+    def add_block(self, transactions):
+        previous_block_hash = self.chain[len(self.chain)-1].hash
+        new_block = Block(transactions, previous_block_hash)
+        proof = self.proof_of_work(new_block)
+        self.chain.append(new_block)
+        return proof, new_block
 
-            if block['previous_hash'] != self.hash(previous_block):
+    def validate_chain(self):
+        for i in range(1, len(self.chain)):
+            current = self.chain[i]
+            previous = self.chain[i-1]
+            if current.hash != current.generate_hash():
+                print("The current hash of the block does not equal the generated hash of the block.")
                 return False
-
-            previous_proof = previous_block['proof']
-            proof = block['proof']
-            hash_op = hashlib.sha256(str(proof**2 - previous_proof**2).encode()).hexdigest()
-
-            if hash_op[:5] != '00000':
+            if previous.hash != previous.generate_hash():
+                print("The previous block's hash does not equal the previous hash value stored in the current block.")
                 return False
-            previous_block = block
-            block_index += 1
-        
+            if current.previous_hash != previous.hash:
+                return False
         return True
+  
+    def proof_of_work(self, block, difficulty=2):
+        proof = block.generate_hash()
+
+        while proof[:2] != '0'*difficulty:
+            block.nonce += 1
+            proof = block.generate_hash()
+        return proof
+
+if __name__ == '__main__':
+    # SKKU_coin = Blockchain()
+    # print(f'SKKU_coin = {SKKU_coin}')
+    # SKKU_coin.print_blocks()
+    # transaction1 = {
+    #     'sender': 'Messi',
+    #     'receiver': 'Ronaldo',
+    #     'amount': 1000,
+    # }
+    # SKKU_coin.add_block(transaction1)
+    # last_block = SKKU_coin.chain[-1]
+    # print(f'last_block: {last_block.transactions}')
+    print('*****************************************************************************************')
+    poll = Blockchain()
+
+    transactions = []
+    
+    transaction1 = {
+        'sender': 'Messi',
+        'receiver': 'Ronaldo',
+        'amount': 1000,
+    }
+    transactions.append(transaction1)
+
+    transaction2 = {
+        'sender': 'Ronaldo',
+        'receiver': 'Messi',
+        'amount': 50,
+    }
+    transactions.append(transaction2)
+
+    transaction3 = {
+        'sender': 'Messi',
+        'receiver': 'Son',
+        'amount': 8000,
+    }
+    transactions.append(transaction3)
+
+    poll.add_block(transactions)
+    poll.print_blocks()
