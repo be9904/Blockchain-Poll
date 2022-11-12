@@ -88,6 +88,7 @@ class BlockchainClient():
     def identity(self):
         return binascii.hexlify(self._public_key.export_key(format='DER')).decode('ascii')
 
+# test run
 if __name__ == '__main__':
     user = BlockchainClient()
     print (user.identity)
