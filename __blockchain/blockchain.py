@@ -131,8 +131,15 @@ def display_transaction(transaction):
 
 # test run
 if __name__ == '__main__':
-    user = BlockchainClient()
-    print (user.identity)
+    Son = BlockchainClient()
+    Messi = BlockchainClient()
+    Ronaldo = BlockchainClient()
+    
+    print("Son:", Son.identity)
+    print("---------------------------------------------------------")
+    print("Messi:", Messi.identity)
+    print("---------------------------------------------------------")
+    print("Ronaldo:", Ronaldo.identity)
 
     print('*****************************************************************************************')
     
@@ -140,25 +147,25 @@ if __name__ == '__main__':
 
     transactions = []
     
-    transaction1 = {
-        'sender': 'Messi',
-        'receiver': 'Ronaldo',
-        'amount': 1000,
-    }
+    transaction1 = Transaction(
+        Messi,
+        Ronaldo,
+        1000
+    )
     transactions.append(transaction1)
 
-    transaction2 = {
-        'sender': 'Ronaldo',
-        'receiver': 'Messi',
-        'amount': 50,
-    }
+    transaction2 = Transaction(
+        Ronaldo,
+        Messi,
+        50
+    )
     transactions.append(transaction2)
 
-    transaction3 = {
-        'sender': 'Messi',
-        'receiver': 'Son',
-        'amount': 8000,
-    }
+    transaction3 = Transaction(
+        Messi,
+        Son,
+        8000
+    )
     transactions.append(transaction3)
 
     poll.add_block(transactions)
