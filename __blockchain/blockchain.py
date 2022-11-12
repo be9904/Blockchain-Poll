@@ -1,6 +1,11 @@
+import binascii
+import Crypto
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
 from datetime import datetime
 from hashlib import sha256
 
+# single block in a blockchain
 class Block:
     def __init__(self, transactions, previous_hash, nonce = 0):
         self.timestamp = datetime.now()
@@ -21,6 +26,7 @@ class Block:
         block_hash = sha256(block_contents.encode())
         return block_hash.hexdigest()
 
+# definition of blockchain
 class Blockchain:
     def __init__(self):
         self.chain = []
@@ -70,19 +76,24 @@ class Blockchain:
             proof = block.generate_hash()
         return proof
 
+# blockchain client info
+class BlockchainClient():
+    def __init__(self):
+        random = Crypto.Random.new().read
+        self._private_key = RSA.generate(1024, random)
+        self._public_key = self._private_key.publickey()
+        self._signer = PKCS1_v1_5.new(self._private_key)
+
+    @property
+    def identity(self):
+        return binascii.hexlify(self._public_key.export_key(format='DER')).decode('ascii')
+
 if __name__ == '__main__':
-    # SKKU_coin = Blockchain()
-    # print(f'SKKU_coin = {SKKU_coin}')
-    # SKKU_coin.print_blocks()
-    # transaction1 = {
-    #     'sender': 'Messi',
-    #     'receiver': 'Ronaldo',
-    #     'amount': 1000,
-    # }
-    # SKKU_coin.add_block(transaction1)
-    # last_block = SKKU_coin.chain[-1]
-    # print(f'last_block: {last_block.transactions}')
+    user = BlockchainClient()
+    print (user.identity)
+
     print('*****************************************************************************************')
+    
     poll = Blockchain()
 
     transactions = []

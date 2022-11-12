@@ -1,7 +1,7 @@
 import binascii
 import datetime
 import collections
-from blockchainclient import BlockchainClient
+from blockchain import *
 from Crypto.Hash import SHA
 from Crypto.Signature import PKCS1_v1_5
 
@@ -43,13 +43,14 @@ def display_transaction(transaction):
    print ("time: " + str(dict['time']))
    print ('-----')
 
+# test run
 if __name__ == '__main__':
     Dinesh = BlockchainClient()
     Ramesh = BlockchainClient()
     Seema = BlockchainClient()
     Vijay = BlockchainClient()
 
-    transactions =[]
+    transactions = []
 
     t = Transaction(
     Dinesh,
