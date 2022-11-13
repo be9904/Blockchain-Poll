@@ -1,17 +1,19 @@
 class SurveyQuestion: # node
-    def __init__(self, question):
+    def __init__(self, question=""):
         self.question = question
         if type(question) is not str:
             self.question = ""
         self.answer = {}
         self.userChoice = 0
+
+        self.nextVal = None
+        self.index = 0
         
-    def append(self, choice):
-        if type(choice) is not str:
-            print('type \'str\' is required')
-            return
-        id = len(self.answer)-1 if len(self.answer) > 0 else 0
-        self.answer[id] = choice
+    def set_next(self, node):
+        # if type(node) is not SurveyQuestion:
+        #     print('SurveyQuestion.set_next :', 'input node only')
+        #     return
+        self.nextVal = node
 
 class Survey:
     def __init__(self, name) -> None:
@@ -40,12 +42,14 @@ class Survey:
         
     # for debugging purposes only
     def print_llist(self):
+        print('<', self.name, '>')
+
         curQ = self.head
-        print(curQ.question)
+        print(curQ.index+1, ' :', curQ.question)
 
         while curQ.nextVal is not None:
             curQ = curQ.nextVal
-            print(curQ.index, ' :', curQ.question)
+            print(curQ.index+1, ' :', curQ.question)
         print()
 
     # add question(node) to llist
@@ -63,14 +67,28 @@ class Survey:
         if index == None:
             index = self.length-1
 
+        # set question to head
+        if index == -1:
+            question.set_next(self.head)
+            question.index = 0
+            self.head = question
+
+            while curQ.index < self.length-1:
+                curQ.index += 1
+                curQ = curQ.nextVal
+
+            self.length += 1
+            
+            return
+
         # return if input node is not of type SurveyQuestion
         if type(question) is not SurveyQuestion:
-            print('add_question:','input \'SurveyQuestion\' only')
+            print('Survey.add_question :','input \'SurveyQuestion\' only')
             return
         
         # return if given index is out of bounds
         if index > self.length-1:
-            print('add_question:', 'given index out of bounds')
+            print('Survey.add_question :', 'given index out of bounds')
             return
 
         # traverse llist
@@ -79,14 +97,33 @@ class Survey:
 
         # exception handling
         if curQ == None:
-            print('add_question:', 'error in llist pointers')
+            print('Survey.add_question :', 'error in llist pointers')
 
         # append item and update list
-        question.nextVal = curQ.nextVal
+        question.set_next(curQ.nextVal)
         if curQ.nextVal is not None:
-            curQ.nexVal.index += 1
+            curQ.nextVal.index += 1
 
-        curQ.nexVal = question
+        curQ.set_next(question)
         question.index = index+1
         self.length += 1
 
+if __name__ == "__main__":
+    q1 = SurveyQuestion('What is your name?')
+    q2 = SurveyQuestion('How old are you?')
+    q3 = SurveyQuestion('What is your major?')
+    q4 = SurveyQuestion('What is your hobby?')
+
+    survey = Survey('Personal Info Survey')
+
+    survey.add_question(q1)
+    survey.print_llist()
+
+    survey.add_question(q2)
+    survey.print_llist()
+
+    survey.add_question(q3)
+    survey.print_llist()
+
+    survey.add_question(q4, -1)
+    survey.print_llist()
