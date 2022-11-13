@@ -34,13 +34,14 @@ class SurveyQuestion: # node
             print('\t*', answer[0])
 
 class Survey:
-    def __init__(self, creator, name) -> None:
+    def __init__(self, creator, name, view_cost=0) -> None:
         # class attributes
         self.creator = creator
         self.name = name
         self.thumbnail = ""
         self.description = ""
         self.participants = {}
+        self.view_cost = view_cost
 
         # linked list implementation
         self.head = None

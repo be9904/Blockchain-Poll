@@ -1,4 +1,5 @@
 import json
+from user import *
 from survey import *
 from blockchain import *
 from tcp import client, server
@@ -12,9 +13,9 @@ sampleCreator = BlockchainClient()
 # c.client_main()
 
 # Login Sequence -> replace tcp
-curUser = BlockchainClient()
+curUser = User(BlockchainClient(), 'yuljeoni')
 
-survey = Survey(sampleCreator, 'Personal Info Survey')
+survey = Survey(sampleCreator, 'Personal Info Survey', 5.0)
 q1 = SurveyQuestion('What is your name?')
 q1.set_choices(['John', 'Joe', 'Sharon', 'Helen'])
 q2 = SurveyQuestion('How old are you?')
@@ -40,11 +41,26 @@ else:
 transactions = []
 t = Transaction(
     sampleCreator,
-    curUser,
+    curUser.client,
     incentive
 )
 t.sign_transaction()
 transactions.append(t)
 
+# chain.add_block(transactions)
+# chain.update_chain()
+
+# On View Survey Click
+if curUser.balance < survey.view_cost:
+    print('not enough coins')
+else:
+    t = Transaction(
+        curUser.client,
+        sampleCreator,
+        survey.view_cost
+    )
+    t.sign_transaction()
+    transactions.append(t)
+    
 chain.add_block(transactions)
 chain.update_chain()
