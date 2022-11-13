@@ -93,7 +93,7 @@ class Blockchain:
 class BlockchainClient():
     def __init__(self):
         rng = Crypto.Random.new().read
-        self._private_key = RSA.generate(1024, rng)
+        self._private_key = RSA.generate(1024)
         self._public_key = self._private_key.publickey()
         self._signer = PKCS1_v1_5.new(self._private_key)
 
@@ -145,7 +145,6 @@ def display_transaction(transaction):
 # test run
 if __name__ == '__main__':
     Son = BlockchainClient()
-    # time.sleep(2)
     Messi = BlockchainClient()
     Ronaldo = BlockchainClient()
     
