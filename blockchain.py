@@ -93,7 +93,6 @@ class Blockchain:
         bchain_json.append(t_dict)
 
         bchain_file_w = open('./blockchain.json', 'w')
-        print(type(bchain_json), type(bchain_file_w))
         json.dump(bchain_json, bchain_file_w, indent=4)
 
     def validate_chain(self):
