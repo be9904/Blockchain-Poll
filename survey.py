@@ -113,13 +113,13 @@ class Survey:
         self.length += 1
 
 if __name__ == "__main__":
+    survey = Survey('Personal Info Survey')
+
     q1 = SurveyQuestion('What is your name?')
     q2 = SurveyQuestion('How old are you?')
     q3 = SurveyQuestion('What is your major?')
     q4 = SurveyQuestion('What is your hobby?')
     q5 = SurveyQuestion('Where do you live?')
-
-    survey = Survey('Personal Info Survey')
 
     survey.add_question(q1)
     survey.print_llist()
