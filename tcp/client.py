@@ -94,5 +94,6 @@ class LocalClient:
 
 ###################### Client main Test Run ########################
 
-client = LocalClient()
-client.client_main()
+if __name__ == "__main__":
+    client = LocalClient()
+    client.client_main()

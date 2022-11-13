@@ -203,5 +203,6 @@ class LocalServer:
 
 ##################### Server main Test Run #########################
 
-server = LocalServer()
-server.server_main()
+if __name__ == "__main__":
+    server = LocalServer()
+    server.server_main()
