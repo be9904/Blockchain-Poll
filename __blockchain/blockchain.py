@@ -1,5 +1,6 @@
 import binascii
 import collections
+import time
 import Crypto
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
@@ -18,9 +19,17 @@ class Block:
 
     def print_block(self):
         # prints block contents
-        print("timestamp:", self.timestamp)
-        print("transactions:", self.transactions)
-        print("current hash:", self.generate_hash())
+        for transaction in self.transactions:
+            print("transaction", self.transactions.index(transaction) + 1)
+            print("\tsender:", transaction.sender.identity)
+            print("\trecipient:", transaction.recipient.identity)
+            print("\ttransfer amount:", transaction.value)
+            print("\ttxn hash:", transaction.txn_hash)
+            print("\ttimestamp:", transaction.time)
+            print("-----------------------------------")
+        print("block timestamp:", self.timestamp)
+        print("previous hash", self.previous_hash)
+        print("current hash:", self.hash)
 
     def generate_hash(self):
         # hash the blocks contents
@@ -46,8 +55,10 @@ class Blockchain:
     def print_blocks(self):
         for i in range(len(self.chain)):
             current_block = self.chain[i]
-            print("Block {} {}".format(i, current_block))
+            print("Block {} : {}".format(i, current_block))
+            print("-----------------------------------")
             current_block.print_block()
+            print("***********************************")
 
     def add_block(self, transactions):
         previous_block_hash = self.chain[len(self.chain)-1].hash
@@ -81,8 +92,8 @@ class Blockchain:
 # blockchain client info
 class BlockchainClient():
     def __init__(self):
-        random = Crypto.Random.new().read
-        self._private_key = RSA.generate(1024, random)
+        rng = Crypto.Random.new().read
+        self._private_key = RSA.generate(1024, rng)
         self._public_key = self._private_key.publickey()
         self._signer = PKCS1_v1_5.new(self._private_key)
 
@@ -96,6 +107,7 @@ class Transaction():
         self.sender = sender
         self.recipient = recipient
         self.value = value
+        self.txn_hash = None
         self.time = datetime.now()
 
     def convert_to_dict(self):
@@ -108,6 +120,7 @@ class Transaction():
             'sender' : identity,
             'recipient' : self.recipient,
             'value' : self.value,
+            'txn hash' : self.txn_hash,
             'time' : self.time
         })
     
@@ -115,7 +128,7 @@ class Transaction():
         private_key = self.sender._private_key
         signer = PKCS1_v1_5.new(private_key)
         h = SHA.new(str(self.convert_to_dict()).encode('utf8'))
-        return binascii.hexlify(signer.sign(h)).decode('ascii')
+        self.txn_hash = binascii.hexlify(signer.sign(h)).decode('ascii')
 
 # print transaction in readable format
 def display_transaction(transaction):
@@ -132,6 +145,7 @@ def display_transaction(transaction):
 # test run
 if __name__ == '__main__':
     Son = BlockchainClient()
+    # time.sleep(2)
     Messi = BlockchainClient()
     Ronaldo = BlockchainClient()
     
@@ -152,6 +166,7 @@ if __name__ == '__main__':
         Ronaldo,
         1000
     )
+    transaction1.sign_transaction()
     transactions.append(transaction1)
 
     transaction2 = Transaction(
@@ -159,6 +174,7 @@ if __name__ == '__main__':
         Messi,
         50
     )
+    transaction2.sign_transaction()
     transactions.append(transaction2)
 
     transaction3 = Transaction(
@@ -166,6 +182,7 @@ if __name__ == '__main__':
         Son,
         8000
     )
+    transaction3.sign_transaction()
     transactions.append(transaction3)
 
     poll.add_block(transactions)
