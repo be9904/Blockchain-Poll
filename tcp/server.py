@@ -3,9 +3,10 @@ import json
 
 class LocalServer:
     # constructor
-    def __init__(self):
+    def __init__(self, path):
         # load server data from json
-        self.user_json = open('./registered-users.json')
+        self.path = path
+        self.user_json = open(self.path)
         self.registered_users = json.load(self.user_json)
 
         # initial server settings
@@ -45,7 +46,7 @@ class LocalServer:
             return (False, '로그인 되어 있지 않습니다')
 
     # register check function
-    def try_register(self, username, password):
+    def try_register(self, username, password, path):
         # check id pw validity
         if username == None or password == None:
             return (False, '사용할 수 없는 아이디 또는 비밀번호입니다')
@@ -56,7 +57,7 @@ class LocalServer:
         # register new user
         else:
             # open json as write mode
-            user_json = open('./registered-users.json', 'w')
+            user_json = open(self.path, 'w')
             
             # add new user info
             self.registered_users[username] = password
@@ -150,7 +151,7 @@ class LocalServer:
                     # register
                     if data[0] == 'r':
                         # try register and set ret msg
-                        _tryregister = self.try_register(data[1], data[2])
+                        _tryregister = self.try_register(data[1], data[2], self.path)
                         return_msg = _tryregister[1]
                 # already logged in
                 else:
@@ -204,5 +205,5 @@ class LocalServer:
 ##################### Server main Test Run #########################
 
 if __name__ == "__main__":
-    server = LocalServer()
+    server = LocalServer('./registered-users.json')
     server.server_main()

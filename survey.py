@@ -3,11 +3,24 @@ class SurveyQuestion: # node
         self.question = question
         if type(question) is not str:
             self.question = ""
-        self.answer = {}
+        self.answer = []
         self.userChoice = 0
 
         self.nextVal = None
         self.index = 0
+
+    def set_choices(self, choices):
+        for choice in choices:
+            self.answer.append((choice, False))
+
+    def choose_option(self, index):
+        # reset choice
+        for i in range(len(self.answer)):
+            c = self.answer[i][0]
+            self.answer[i] = (c, False)
+        
+        # choose option
+        self.answer[index] = (self.answer[index][0], True)
         
     def set_next(self, node):
         # if type(node) is not SurveyQuestion:
@@ -15,12 +28,18 @@ class SurveyQuestion: # node
         #     return
         self.nextVal = node
 
+    def print_question(self):
+        print(str(self.index+1)+'.', self.question)
+        for answer in self.answer:
+            print('\t*', answer[0])
+
 class Survey:
     def __init__(self, name) -> None:
         # class attributes
         self.name = name
         self.thumbnail = ""
         self.description = ""
+        self.participants = {}
 
         # linked list implementation
         self.head = None
@@ -36,6 +55,15 @@ class Survey:
     def set_description(self, description):
         self.description = description
 
+    def add_participant(self, user):
+        self.participants[user] = True
+    
+    def check_participation(self, user):
+        if self.participants.get(user):
+            return True
+        else:
+            return False
+
     ####################################################################
     ###################### Linked List Functions #######################
     ####################################################################
@@ -45,11 +73,11 @@ class Survey:
         print('<', self.name, '>')
 
         curQ = self.head
-        print(curQ.index+1, ' :', curQ.question)
+        curQ.print_question()
 
         while curQ.nextVal is not None:
             curQ = curQ.nextVal
-            print(curQ.index+1, ' :', curQ.question)
+            curQ.print_question()
         print()
 
     # add question(node) to llist
@@ -116,6 +144,7 @@ if __name__ == "__main__":
     survey = Survey('Personal Info Survey')
 
     q1 = SurveyQuestion('What is your name?')
+    q1.set_choices(['John', 'Joe', 'Sharon'])
     q2 = SurveyQuestion('How old are you?')
     q3 = SurveyQuestion('What is your major?')
     q4 = SurveyQuestion('What is your hobby?')
