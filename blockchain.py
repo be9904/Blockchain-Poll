@@ -1,6 +1,7 @@
 import binascii
 import collections
 import time
+import json
 import Crypto
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
@@ -11,11 +12,15 @@ from hashlib import sha256
 # single block in a blockchain
 class Block:
     def __init__(self, transactions, previous_hash, nonce = 0):
+        self.id = -1
         self.timestamp = datetime.now()
         self.transactions = transactions
         self.previous_hash = previous_hash
         self.nonce = nonce
         self.hash = self.generate_hash()
+
+    def set_id(self, id):
+        self.id = id
 
     def print_block(self):
         # prints block contents
@@ -48,6 +53,7 @@ class Blockchain:
         if len(self.chain) == 0:
             transactions = []
             block = Block(transactions, 0)
+            block.set_id(len(self.chain))
             self.chain.append(block)
             return self.chain
 
@@ -64,8 +70,28 @@ class Blockchain:
         previous_block_hash = self.chain[len(self.chain)-1].hash
         new_block = Block(transactions, previous_block_hash)
         proof = self.proof_of_work(new_block)
+        new_block.set_id(len(self.chain))
         self.chain.append(new_block)
         return proof, new_block
+
+    def update_chain(self):
+        # open json file and load content
+        bchain_file = open('./blockchain.json')
+        bchain_json = json.load(bchain_file)
+
+        block = self.chain[len(self.chain)-1]
+        if bchain_json.get(block.id) is not None:
+            bchain_json[block.id] = []
+        else:
+            return
+
+        for transaction in block.transactions:
+            t_dict = transaction.convert_to_dict()
+            bchain_json[block.id].append(t_dict)
+
+        bchain_file_w = open('./blockchain.json', 'w')
+        print(type(bchain_json), type(bchain_file_w))
+        json.dump(bchain_json, bchain_file_w, indent=4)
 
     def validate_chain(self):
         for i in range(1, len(self.chain)):
@@ -108,7 +134,7 @@ class Transaction():
         self.recipient = recipient
         self.value = value
         self.txn_hash = None
-        self.time = datetime.now()
+        self.time = time.time()
 
     def convert_to_dict(self):
         if self.sender == "Genesis":
@@ -118,7 +144,7 @@ class Transaction():
 
         return collections.OrderedDict({
             'sender' : identity,
-            'recipient' : self.recipient,
+            'recipient' : self.recipient.identity,
             'value' : self.value,
             'txn hash' : self.txn_hash,
             'time' : self.time
@@ -185,4 +211,5 @@ if __name__ == '__main__':
     transactions.append(transaction3)
 
     poll.add_block(transactions)
+    poll.update_chain()
     poll.print_blocks()
