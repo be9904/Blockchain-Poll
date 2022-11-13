@@ -3,3 +3,4 @@ from blockchain import *
 from tcp import client, server
 
 c = client.LocalClient()
+# s = server.LocalServer()
