@@ -34,8 +34,9 @@ class SurveyQuestion: # node
             print('\t*', answer[0])
 
 class Survey:
-    def __init__(self, name) -> None:
+    def __init__(self, creator, name) -> None:
         # class attributes
+        self.creator = creator
         self.name = name
         self.thumbnail = ""
         self.description = ""
@@ -59,10 +60,10 @@ class Survey:
         self.participants[user] = True
     
     def check_participation(self, user):
-        if self.participants.get(user):
-            return True
-        else:
+        if self.participants.get(user) is None:
             return False
+        else:
+            return True
 
     ####################################################################
     ###################### Linked List Functions #######################
@@ -144,8 +145,9 @@ if __name__ == "__main__":
     survey = Survey('Personal Info Survey')
 
     q1 = SurveyQuestion('What is your name?')
-    q1.set_choices(['John', 'Joe', 'Sharon'])
+    q1.set_choices(['John', 'Joe', 'Sharon', 'Helen'])
     q2 = SurveyQuestion('How old are you?')
+    q2.set_choices([20, 21, 22, 23, 24, 25])
     q3 = SurveyQuestion('What is your major?')
     q4 = SurveyQuestion('What is your hobby?')
     q5 = SurveyQuestion('Where do you live?')
