@@ -61,6 +61,7 @@ else:
     )
     t.sign_transaction()
     transactions.append(t)
-    
+
+# update chain
 chain.add_block(transactions)
 chain.update_chain()
