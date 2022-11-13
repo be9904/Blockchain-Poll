@@ -77,6 +77,7 @@ class Survey:
                 curQ.index += 1
                 curQ = curQ.nextVal
 
+            curQ.index += 1
             self.length += 1
             
             return
