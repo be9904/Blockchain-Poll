@@ -66,6 +66,9 @@ class Survey:
         # set default append index to last item of llist
         if index == None:
             index = self.length-1
+        else:
+            index -= 2
+        
 
         # set question to head
         if index == -1:
@@ -114,6 +117,7 @@ if __name__ == "__main__":
     q2 = SurveyQuestion('How old are you?')
     q3 = SurveyQuestion('What is your major?')
     q4 = SurveyQuestion('What is your hobby?')
+    q5 = SurveyQuestion('Where do you live?')
 
     survey = Survey('Personal Info Survey')
 
@@ -126,5 +130,8 @@ if __name__ == "__main__":
     survey.add_question(q3)
     survey.print_llist()
 
-    survey.add_question(q4, -1)
+    survey.add_question(q4, 1)
+    survey.print_llist()
+
+    survey.add_question(q5, 4)
     survey.print_llist()
