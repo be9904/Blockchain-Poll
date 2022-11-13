@@ -80,14 +80,17 @@ class Blockchain:
         bchain_json = json.load(bchain_file)
 
         block = self.chain[len(self.chain)-1]
-        if bchain_json.get(block.id) is not None:
-            bchain_json[block.id] = []
-        else:
-            return
+
+        t_dict = {}
+        t_list = []
 
         for transaction in block.transactions:
-            t_dict = transaction.convert_to_dict()
-            bchain_json[block.id].append(t_dict)
+            t_list.append(transaction.convert_to_dict())
+            t_dict['id'] = len(bchain_json)
+            t_dict['transactions'] = t_list
+            # bchain_json[block.id].append(t_dict)
+
+        bchain_json.append(t_dict)
 
         bchain_file_w = open('./blockchain.json', 'w')
         print(type(bchain_json), type(bchain_file_w))
