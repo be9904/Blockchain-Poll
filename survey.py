@@ -1,8 +1,9 @@
-class SurveyQuestion: # node
+# node
+class SurveyQuestion:
     def __init__(self, question=""):
         self.question = question
-        if type(question) is not str:
-            self.question = ""
+        # if type(question) is not str:
+        #     self.question = ""
         self.answer = []
         self.userChoice = 0
 
@@ -33,6 +34,7 @@ class SurveyQuestion: # node
         for answer in self.answer:
             print('\t*', answer[0])
 
+# linked list
 class Survey:
     def __init__(self, creator, name, view_cost=0) -> None:
         # class attributes

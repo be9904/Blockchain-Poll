@@ -37,6 +37,8 @@ if survey.check_participation(curUser) is False:
 else:
     print('already participated')
 
+#############################################
+
 # On Submit Click
 transactions = []
 t = Transaction(
