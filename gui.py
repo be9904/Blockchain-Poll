@@ -98,16 +98,12 @@ def survey1():
 #저희가 다수의 영상을 필요로 하는 만큼 복잡도를 줄이기 위해
 #그냥 이미지나 gif로 대체하는 것에 대한 의견을 여쭤보고 싶습니다
 
-    window_survey1 = Tk()
-    window_survey1.geometry("500x500+500+200")
-
     # setup survey
     survey1 = survey.CreateSample()
     curQ = survey1.head
-    window_survey1.title(survey1.name)
 
     # load question
-    load_question(window_survey1, curQ)
+    window = load_question(survey1, curQ, curWindow=None)
 
     # button_q1a1 = tk.Radiobutton(window_survey1, text="질문1의 선택지1", value=1, variable=q1_var)
     # button_q1a2 = tk.Radiobutton(window_survey1, text="질문1의 선택지2", value=2, variable=q1_var)
@@ -119,14 +115,31 @@ def survey1():
     # button_q1a3.pack()
     # button_q1a4.pack()
 
-    next1 = tk.Button(window_survey1, text="다음")
-    next1.pack()
+    # next1 = tk.Button(window, text="다음")
+    # next1.pack()
 
-def load_question(window, curQ):
+def destroy_window(window):
+    window.destroy()
+
+def load_question(survey, curQ, curWindow):
+    if curWindow is not None:
+        curWindow.destroy()
+
+    window = Tk()
+    window.geometry("500x500+500+200")
+    window.title(survey.name)
+
     tk.Label(window, text=curQ.question).pack()
     q1_var = tk.IntVar()
     for i in range(len(curQ.answer)):
         tk.Radiobutton(window, text=curQ.answer[i][0], value=i+1, variable=q1_var).pack()
+
+    if curQ.nextVal is None:
+        next = tk.Button(window, text="완료", command= lambda: destroy_window(window))
+        next.pack()
+    else:
+        next = tk.Button(window, text="다음", command= lambda: load_question(survey, curQ.nextVal, window))
+        next.pack()
 #일단 첫번째 질문 선택 화면까지는 단순히 구현했으나
 #이후로는 영상-질문-영상-질문의 연속이고 앞서 말씀드린것처럼
 #영상을 아예 이미지로 대체하는 것에 대한 결정이 안났고
