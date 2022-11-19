@@ -24,26 +24,30 @@ window_login = Tk()
 
 user_id, password = StringVar(), StringVar()
 
+exit = 0
 #로그인 함수
 def login():
     if user_id.get() == "id" and password.get() == "pw":
         print("로그인 성공")
+        global exit
+        exit = 1
         window_login.destroy() 
         
         
     else:
         messagebox.showinfo('로그인', '로그인 실패')
 
-#로그인 창 설정
-window_login.title("회원 로그인")
+def window_login_func():
+    #로그인 창 설정
+    window_login.title("회원 로그인")
 
-tk.Label(window_login, text = "ID : ").grid(row = 0, column = 0, padx = 10, pady = 10)
-tk.Label(window_login, text = "Password : ").grid(row = 1, column = 0, padx = 10, pady = 10)
-tk.Entry(window_login, textvariable = user_id).grid(row = 0, column = 1, padx = 10, pady = 10)
-tk.Entry(window_login, textvariable = password, show='*').grid(row = 1, column = 1, padx = 10, pady = 10)
-tk.Button(window_login, text = "로그인", command = login).grid(row = 2, column = 1, padx = 10, pady = 10)
+    tk.Label(window_login, text = "ID : ").grid(row = 0, column = 0, padx = 10, pady = 10)
+    tk.Label(window_login, text = "Password : ").grid(row = 1, column = 0, padx = 10, pady = 10)
+    tk.Entry(window_login, textvariable = user_id).grid(row = 0, column = 1, padx = 10, pady = 10)
+    tk.Entry(window_login, textvariable = password, show='*').grid(row = 1, column = 1, padx = 10, pady = 10)
+    tk.Button(window_login, text = "로그인", command = login).grid(row = 2, column = 1, padx = 10, pady = 10)
 
-window_login.mainloop()
+    window_login.mainloop()
 
 #마이페이지
 def myPage():
@@ -104,32 +108,46 @@ def survey1():
 # 두 과정은 사용자 데이터 구조를 만드신 조원분이 방향성을 알려주신 후 진행하는게 좋을 것 같습니다
 
 #홈화면
-window_thumnails = Tk()
+def window_thumnails_func():
     
-window_thumnails.title("홈")
+    global exit
 
-Button(window_thumnails, text="마이페이지", command = myPage).grid(row=0, column=0, ipadx=200, ipady=10)
-Button(window_thumnails, text="<<").grid(row=3, column=0, ipadx=200, ipady=10)
-Button(window_thumnails, text=">>").grid(row=3, column=2, ipadx=200, ipady=10)
+    if exit:
+        window_thumnails = Tk()
+            
+        window_thumnails.title("홈")
+
+        Button(window_thumnails, text="마이페이지", command = myPage).grid(row=0, column=0, ipadx=200, ipady=10)
+        Button(window_thumnails, text="<<").grid(row=3, column=0, ipadx=200, ipady=10)
+        Button(window_thumnails, text=">>").grid(row=3, column=2, ipadx=200, ipady=10)
 
 
-thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
-t1 = tk.Button(window_thumnails, image=thumb1, command=survey1).grid(row=1, column=0)
+        thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
+        t1 = tk.Button(window_thumnails, image=thumb1, command=survey1).grid(row=1, column=0)
 
-thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
-t2 = tk.Button(window_thumnails, image=thumb2).grid(row=1,column=1)
+        thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
+        t2 = tk.Button(window_thumnails, image=thumb2).grid(row=1,column=1)
 
-thumb3 = PhotoImage(file=r"./gui/thumb3_game.png")
-t3 = tk.Button(window_thumnails, image=thumb3).grid(row=1, column=2)
+        thumb3 = PhotoImage(file=r"./gui/thumb3_game.png")
+        t3 = tk.Button(window_thumnails, image=thumb3).grid(row=1, column=2)
 
-thumb4 = PhotoImage(file=r"./gui/thumb4_food.png")
-t4 = tk.Button(window_thumnails, image=thumb4).grid(row=2, column=0)
+        thumb4 = PhotoImage(file=r"./gui/thumb4_food.png")
+        t4 = tk.Button(window_thumnails, image=thumb4).grid(row=2, column=0)
 
-thumb5 = PhotoImage(file=r"./gui/thumb5_character.png")
-t5 = tk.Button(window_thumnails, image=thumb5).grid(row=2, column=1)
+        thumb5 = PhotoImage(file=r"./gui/thumb5_character.png")
+        t5 = tk.Button(window_thumnails, image=thumb5).grid(row=2, column=1)
 
-thumb6 = PhotoImage(file=r"./gui/thumb6_ott.png")
-t6 = tk.Button(window_thumnails, image=thumb6).grid(row=2, column=2)
+        thumb6 = PhotoImage(file=r"./gui/thumb6_ott.png")
+        t6 = tk.Button(window_thumnails, image=thumb6).grid(row=2, column=2)
 
-window_thumnails.mainloop()
+        window_thumnails.mainloop()
 
+    else:
+        pass
+
+
+
+if __name__ == '__main__':
+    window_login_func()
+
+    window_thumnails_func()
