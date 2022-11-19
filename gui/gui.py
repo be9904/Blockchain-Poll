@@ -1,9 +1,10 @@
 from tkinter import *
 import tkinter as tk
-from PIL import ImageTk
-import numpy as np
-import cv2 as cv
-import os
+import time
+#from PIL import ImageTk
+#import numpy as np
+#import cv2 as cv
+#import os
 
 #처음엔 로그인 윈도우를 가장 먼저 띄우고 로그인에 성공하면
 #로그인 윈도우는 사라지고 홈화면 윈도우가 뜨는 방식을 생각하고
@@ -53,17 +54,17 @@ def myPage():
 #설문
 def survey1():
 
-    # window_video1 = Tk()
-    # window_video1.title("설문 제목")
+   # window_video1 = Tk()
+    #window_video1.title("설문 제목")
 
-    # video = cv.VideoCapture('thumb1_video1.mp4')
-    # ret, frame = video.read()
-    # frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-    # img = Image.fromarray(frame)
-    # imgtk = ImageTk.PhotoImage(image=img)
-    # lbl1.imgtk = imgtk
-    # lbl1.configure(image=imgtk)
-    # lbl1.after(10, video_play)
+    #video = cv.VideoCapture('thumb1_video1.mp4')
+    #ret, frame = video.read()
+    #frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    #img = Image.fromarray(frame)
+    #imgtk = ImageTk.PhotoImage(image=img)
+    #lbl1.imgtk = imgtk
+    #lbl1.configure(image=imgtk)
+    #lbl1.after(10, video_play)
 
 #openCV로 동영상을 불러오는 방법을 찾아보고 따라해보았지만
 #영상은 프레임, 코덱 등 바로 이해하고 따라하기 어려운 부분이 있었고
@@ -100,8 +101,6 @@ def survey1():
 #이제 답변을 사용자의 데이터에 저장하고 통계를 내는 과정이 시작되기 때문에
 #또한 위의 마이페이지 화면 구성 부분은 
 # 두 과정은 사용자 데이터 구조를 만드신 조원분이 방향성을 알려주신 후 진행하는게 좋을 것 같습니다
-        
-survey1()
 
 #홈화면
 window_thumnails = Tk()
@@ -131,6 +130,5 @@ t5 = tk.Button(window_thumnails, image=thumb5).grid(row=2, column=1)
 thumb6 = PhotoImage(file=r"thumb6_ott.png")
 t6 = tk.Button(window_thumnails, image=thumb6).grid(row=2, column=2)
 
-
-window_thumbnails.mainloop()
+window_thumnails.mainloop()
 
