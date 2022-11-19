@@ -5,7 +5,9 @@ from socket import *
 from tcp import client
 import survey
 import time
+import ast
 from blockchain import *
+from user import *
 from plot import *
 
 class AppGUI:
@@ -216,4 +218,23 @@ class AppGUI:
         scrollbar.config( command = mylist.yview )
 
 if __name__ == '__main__':
+    chain = Blockchain()
+    incentive = 2.0
+    sampleCreator = User(BlockchainClient(), 'sampleCreator')
+    
+    # dummy user makes transaction
+    dummyUser1 = User(BlockchainClient(), 'dummy')
+    transactions = []
+    t = Transaction(
+        sampleCreator.client,
+        dummyUser1.client,
+        incentive
+    )
+    t.sign_transaction()
+    transactions.append(t)
+    
+    chain.add_block(transactions)
+    chain.update_chain()
+    
+    # run the main gui app
     app = AppGUI()

@@ -1,3 +1,5 @@
+from json import JSONEncoder
+
 class User:
     def __init__(self, client, name) -> None:
         self.client = client
@@ -9,3 +11,7 @@ class User:
 
     def update_balance(self, delta):
         self.balance = self.balance + delta
+
+class UserEncoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__

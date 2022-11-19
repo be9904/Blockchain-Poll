@@ -8,6 +8,7 @@ class LocalServer:
         self.path = path
         self.user_json = open(self.path)
         self.registered_users = json.load(self.user_json)
+        self.user_data = json.load(open('./users.json'))
 
         # initial server settings
         self.serverHost = '127.0.0.1'
@@ -22,6 +23,17 @@ class LocalServer:
         # define currently logged in id
         self.curUser = None
 
+    def update_userinfo(self):
+         # open json as write mode
+        user_json = open('./users.json', 'w')
+        
+        # add new user info
+        self.user_data[self.curUser.name] = self.curUser
+        
+        # update json
+        json.dump(self.user_data, user_json)
+        print('updated user info')
+
     # login check function
     def try_login(self, username, password):   
         # not registered
@@ -30,8 +42,8 @@ class LocalServer:
         
         # login success
         if self.registered_users[username] == password:
-            self.curUser = username
-            return (True, '로그인 성공')
+            self.curUser = self.user_data[username]
+            return (True, json.dumps(self.curUser))
         
         return (False, '비밀번호를 확인해주세요')
     
