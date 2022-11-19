@@ -103,7 +103,6 @@ class LocalServer:
 
             data = data.split()
 
-            print(data)
             if data[0] == 'update_userinfo':
                 self.update_userinfo(float(data[1]))
                 self.connectionSocket.send(data[1].encode())

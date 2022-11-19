@@ -147,7 +147,7 @@ class Survey:
         self.length += 1
 
 def CreateSample():
-    survey = Survey('sampleCreator', '고양이 설문', 15)
+    survey = Survey('sampleCreator', '고양이 설문', 15.0)
 
     q1 = SurveyQuestion('고양이의 연령대를 선택해주세요.')
     q1.set_choices([
