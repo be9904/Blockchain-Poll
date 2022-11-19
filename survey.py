@@ -5,7 +5,7 @@ class SurveyQuestion:
         # if type(question) is not str:
         #     self.question = ""
         self.answer = []
-        self.userChoice = -1
+        self.userChoice = 0
 
         self.nextVal = None
         self.index = 0

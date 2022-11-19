@@ -134,7 +134,7 @@ def choose_answer(question, index):
 def destroy_window(window, survey):
     window.destroy()
     messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
-    # print_results(survey)
+    print_results(survey)
     window_thumnails_func()
 
 def load_question(survey, curQ, curWindow):
@@ -147,8 +147,10 @@ def load_question(survey, curQ, curWindow):
 
     image_frame = tk.Frame(window, relief='groove', bd=2)
     image_frame.pack(side='left', fill='both', expand=True)
-    image = PhotoImage(file=r"./gui/thumb1_cat.png")
-    tk.Label(image_frame, image=image).pack()
+    i = PhotoImage(file="./gui/thumb1_cat.png")
+    t = tk.Label(image_frame, image=i)
+    t.image = i
+    t.pack()
 
     text_frame = tk.Frame(window, relief='groove', bd=2)
     text_frame.pack(side='right', fill='both', expand=True)
