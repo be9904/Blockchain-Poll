@@ -9,6 +9,7 @@ from blockchain import *
 from plot import *
 
 class AppGUI:
+    # constructor
     def __init__(self):
         # create client instance
         self._client = client.LocalClient(BlockchainClient())
@@ -20,6 +21,9 @@ class AppGUI:
 
         self.start_app()
 
+    ############################################################
+    ######################### Init GUI #########################
+    ############################################################
     def start_app(self):
         window_login = tk.Tk()
         window_login.geometry("300x150+500+200")
@@ -36,8 +40,6 @@ class AppGUI:
         window_login.protocol("WM_DELETE_WINDOW", lambda: self.disconnect(window_login))
         window_login.mainloop()
 
-
-
     def login_tcp(self, window, username, password):
         # 프레임 내에서 텍스트 변경
         # tk.Label(window_login, text = "TEST").grid(row = 0, column = 0, padx = 10, pady = 10)
@@ -51,11 +53,13 @@ class AppGUI:
             window.destroy()
             if username.get() == 'admin':
                 self.isAdmin = True
-                self.window_thumnails_func(self.isAdmin)
+                self.window_thumbnails(self.isAdmin)
             else:
-                self.window_thumnails_func(self.isAdmin)        
+                self.window_thumbnails(self.isAdmin)        
 
-        #설문
+    ############################################################
+    ###################### Survey Screen #######################
+    ############################################################
     def survey1(self, window):
         window.destroy()
 
@@ -63,10 +67,12 @@ class AppGUI:
         survey1 = survey.CreateSample()
         curQ = survey1.head
 
+        # create survey window
         window = Tk()
         window.geometry("500x500+500+200")
         window.title(survey1.name)
 
+        # set image frame
         image_frame = tk.Frame(window, relief='groove', bd=2)
         image_frame.pack(side='left', fill='both', expand=True)
         i = PhotoImage(file="./gui/q1image.png")
@@ -77,23 +83,7 @@ class AppGUI:
         # load question
         window = self.load_question(survey1, curQ, window, prevFrame=None)
 
-    # for debugging
-    def print_results(self, survey):
-        q = survey.head
-        while q is not None:
-            print("q:", q.userChoice)
-            q = q.nextVal
-            print()
-
-    def choose_answer(self, question, index):
-        question.choose_option(index.get())
-
-    def finish_survey(self, window, survey):
-        window.destroy()
-        messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
-        self.print_results(survey)
-        self.window_thumnails_func(self.isAdmin)
-
+    # get questions (recursive)
     def load_question(self, survey, curQ, curWindow, prevFrame):
         if prevFrame is not None:
             prevFrame.pack_forget()
@@ -121,45 +111,69 @@ class AppGUI:
             next = tk.Button(text_frame, text="다음", command= lambda: self.load_question(survey, curQ.nextVal, curWindow, text_frame))
             next.pack()
 
-    #홈화면
-    def window_thumnails_func(self, isAdmin):
-        window_thumnails = tk.Tk()
-        
-        window_thumnails.title("홈")
+    ############################################################
+    ################# Survey Command Functions #################
+    ############################################################
+    def choose_answer(self, question, index):
+        question.choose_option(index.get())
 
-        Button(window_thumnails, text="마이페이지", command = myPage).grid(row=0, column=0, padx=(0,230))
+    def finish_survey(self, window, survey):
+        window.destroy()
+        messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
+        self.print_results(survey)
+        self.window_thumbnails(self.isAdmin)
+
+    ############################################################
+    ####################### Home Screen ########################
+    ############################################################
+    def window_thumbnails(self, isAdmin):
+        window = tk.Tk()
+        
+        window.title("홈")
+
         if isAdmin:
-            tk.Button(window_thumnails, text="서버 종료", command=lambda:self.close_server(window_thumnails)) \
+            tk.Button(window, text="서버 종료", command=lambda:self.close_server(window)) \
             .grid(
                 row=0,
                 column=2,
                 padx=(245,0)
             )
-        Button(window_thumnails, text="<<").grid(row=3, column=0, ipadx=75, ipady=5)
-        Button(window_thumnails, text=">>").grid(row=3, column=2, ipadx=75, ipady=5)
-
+        tk.Button(window, text="<<").grid(row=3, column=0, ipadx=75, ipady=5)
+        tk.Button(window, text=">>").grid(row=3, column=2, ipadx=75, ipady=5)
+        tk.Button(window, text="마이페이지", command =lambda:self.window_mypage(window)).grid(row=0, column=0, padx=(0,230))
 
         thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
-        t1 = tk.Button(window_thumnails, image=thumb1, command=lambda:self.survey1(window_thumnails)).grid(row=1, column=0)
+        t1 = tk.Button(window, image=thumb1, command=lambda:self.survey1(window)).grid(row=1, column=0)
 
         thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
-        t2 = tk.Button(window_thumnails, image=thumb2).grid(row=1,column=1)
+        t2 = tk.Button(window, image=thumb2).grid(row=1,column=1)
 
         thumb3 = PhotoImage(file=r"./gui/thumb3_game.png")
-        t3 = tk.Button(window_thumnails, image=thumb3).grid(row=1, column=2)
+        t3 = tk.Button(window, image=thumb3).grid(row=1, column=2)
 
         thumb4 = PhotoImage(file=r"./gui/thumb4_food.png")
-        t4 = tk.Button(window_thumnails, image=thumb4).grid(row=2, column=0)
+        t4 = tk.Button(window, image=thumb4).grid(row=2, column=0)
 
         thumb5 = PhotoImage(file=r"./gui/thumb5_character.png")
-        t5 = tk.Button(window_thumnails, image=thumb5).grid(row=2, column=1)
+        t5 = tk.Button(window, image=thumb5).grid(row=2, column=1)
 
         thumb6 = PhotoImage(file=r"./gui/thumb6_ott.png")
-        t6 = tk.Button(window_thumnails, image=thumb6).grid(row=2, column=2)
+        t6 = tk.Button(window, image=thumb6).grid(row=2, column=2)
 
-        window_thumnails.protocol("WM_DELETE_WINDOW", lambda: self.disconnect(window_thumnails))
-        window_thumnails.mainloop()
+        window.protocol("WM_DELETE_WINDOW", lambda: self.disconnect(window))
+        window.mainloop()
 
+    # for debugging
+    def print_results(self, survey):
+        q = survey.head
+        while q is not None:
+            print("q:", q.userChoice)
+            q = q.nextVal
+            print()
+
+    ############################################################
+    #################### Protocol Functions ####################
+    ############################################################
     def disconnect(self, window):
         try:
             self.clientSocket.send('disconnect'.encode())
@@ -167,6 +181,7 @@ class AppGUI:
         except:
             pass
         window.destroy()
+        quit()
 
     def close_server(self, window):
         try:
@@ -175,12 +190,30 @@ class AppGUI:
         except:
             pass
         window.destroy()
+    
+    ############################################################
+    ###################### Results Screen ######################
+    ############################################################
+    def window_results(self):
+        pass
 
-#마이페이지
-def myPage():
-    window_myPage = Tk()
+    ############################################################
+    ######################### My Page ##########################
+    ############################################################
+    def window_mypage(self, parentWindow):
+        window = tk.Toplevel(parentWindow)
+        window.title("마이페이지")
+        window.geometry("500x500+500+200")
 
-    window_myPage.title("마이페이지")
+        scrollbar = Scrollbar(window)
+        scrollbar.pack( side = RIGHT, fill = Y )
+
+        mylist = Listbox(window, yscrollcommand = scrollbar.set )
+        for line in range(100):
+            mylist.insert(END, "This is line number " + str(line))
+
+        mylist.pack( side = LEFT, fill = BOTH )
+        scrollbar.config( command = mylist.yview )
 
 if __name__ == '__main__':
     app = AppGUI()
