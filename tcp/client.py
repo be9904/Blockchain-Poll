@@ -19,6 +19,35 @@ class LocalClient:
     def register_msg(self, id, pw):
         return 'r ' + id + ' ' + pw
 
+    def try_login(self, username, password):
+        isSuccess = False
+
+        print(type(username), type(password))
+        print(username, password)
+
+        # create client socket
+        clientSocket = socket(AF_INET, SOCK_STREAM)
+
+        # connect to server
+        clientSocket.connect((self.serverIP, self.serverPort))
+
+        clientSocket.send(self.login_msg(username, password).encode())
+        print(self.login_msg(username, password).encode())
+
+        receivedMessage = clientSocket.recv(1024).decode()
+
+        # log server reply
+        print('----------------------')
+        print(' <Server>', receivedMessage)
+        print('----------------------')
+        
+        clientSocket.close()
+
+        if receivedMessage == '로그인 성공':
+            isSuccess = True
+
+        return (isSuccess, receivedMessage)
+
     # start screen as function
     # generates login, logout, register, exit, close server messages
     def start_screen(self, action, socket):

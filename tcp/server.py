@@ -128,7 +128,7 @@ class LocalServer:
 
                 # logout
                 if data[0] == 'logout':
-                    _trylogout = self.try_logout();
+                    _trylogout = self.try_logout()
                     return_msg = _trylogout[1]
                 # client msg in wrong format
                 elif len(data) != 3:

@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter as tk
 from tkinter import messagebox
+from tcp import client
 import time
 #from PIL import ImageTk
 #import numpy as np
@@ -20,6 +21,8 @@ import time
 
 #다른 좋은 방식이 있으시면 알려주시고 최대한 에러를 해결할 방법을 찾아보겠습니다.
 
+_client = client.LocalClient()
+
 window_login = Tk()
 
 user_id, password = StringVar(), StringVar()
@@ -37,6 +40,17 @@ def login():
     else:
         messagebox.showinfo('로그인', '로그인 실패')
 
+def login_tcp(username, password):
+    packet = _client.try_login(username.get(), password.get())
+
+    if packet[0]:
+        print("로그인 성공")
+        global exit
+        exit = 1
+        window_login.destroy()
+    else:
+        messagebox.showinfo('로그인', packet[1])
+
 def window_login_func():
     #로그인 창 설정
     window_login.title("회원 로그인")
@@ -45,8 +59,8 @@ def window_login_func():
     tk.Label(window_login, text = "Password : ").grid(row = 1, column = 0, padx = 10, pady = 10)
     tk.Entry(window_login, textvariable = user_id).grid(row = 0, column = 1, padx = 10, pady = 10)
     tk.Entry(window_login, textvariable = password, show='*').grid(row = 1, column = 1, padx = 10, pady = 10)
-    tk.Button(window_login, text = "로그인", command = login).grid(row = 2, column = 1, padx = 10, pady = 10)
-
+    # tk.Button(window_login, text = "로그인", command = login).grid(row = 2, column = 1, padx = 10, pady = 10)
+    tk.Button(window_login, text='로그인', command= lambda: login_tcp(user_id, password)).grid(row = 2, column = 1, padx = 10, pady = 10)
     window_login.mainloop()
 
 #마이페이지
