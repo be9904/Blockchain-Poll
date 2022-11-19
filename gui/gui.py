@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter as tk
+from tkinter import messagebox
 import time
 #from PIL import ImageTk
 #import numpy as np
@@ -31,7 +32,7 @@ def login():
         
         
     else:
-        print("로그인 실패")
+        messagebox.showinfo('로그인', '로그인 실패')
 
 #로그인 창 설정
 window_login.title("회원 로그인")
