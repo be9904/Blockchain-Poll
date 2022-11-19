@@ -45,6 +45,8 @@ def login():
         messagebox.showinfo('로그인', '로그인 실패')
 
 def login_tcp(username, password):
+    # 프레임 내에서 텍스트 변경
+    # tk.Label(window_login, text = "TEST").grid(row = 0, column = 0, padx = 10, pady = 10)
     packet = _client.try_login(clientSocket, username.get(), password.get())
 
     if packet[0]:

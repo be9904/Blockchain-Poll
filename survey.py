@@ -5,7 +5,7 @@ class SurveyQuestion:
         # if type(question) is not str:
         #     self.question = ""
         self.answer = []
-        self.userChoice = 0
+        self.userChoice = -1
 
         self.nextVal = None
         self.index = 0
@@ -53,8 +53,8 @@ class Survey:
     ################### Class Attribute Functions ######################
     ####################################################################
 
-    def set_thumbnail(self, url):
-        self.thumbnail = url
+    def set_thumbnail(self, path):
+        self.thumbnail = path
         
     def set_description(self, description):
         self.description = description
