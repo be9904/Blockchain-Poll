@@ -18,7 +18,7 @@ import time
 #로그인과 홈화면을 한꺼번에 실행하니 또다른 에러가...ㅠㅠ
 
 #다른 좋은 방식이 있으시면 알려주시고 최대한 에러를 해결할 방법을 찾아보겠습니다.
-'''
+
 window_login = Tk()
 
 user_id, password = StringVar(), StringVar()
@@ -41,8 +41,8 @@ tk.Label(window_login, text = "Password : ").grid(row = 1, column = 0, padx = 10
 tk.Entry(window_login, textvariable = user_id).grid(row = 0, column = 1, padx = 10, pady = 10)
 tk.Entry(window_login, textvariable = password, show='*').grid(row = 1, column = 1, padx = 10, pady = 10)
 tk.Button(window_login, text = "로그인", command = login).grid(row = 2, column = 1, padx = 10, pady = 10)
-'''
 
+window_login.mainloop()
 
 #마이페이지
 def myPage():
