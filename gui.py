@@ -144,11 +144,19 @@ class AppGUI:
         
         chain.add_block(transactions)
         chain.update_chain()
+        
+        # update balance
+        self.curUser.balance += incentive
 
         # add curuser to participants list
         self.sampleSurvey.participants[self.curUser.name] = True
 
         messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
+
+        # request update to server
+        msg = "update_userinfo "+str(self.curUser.balance)
+        self.clientSocket.send(msg.encode())
+        self.clientSocket.recv(1024).decode()
     
         self.save_results(self.sampleSurvey)
         self.window_thumbnails(self.isAdmin)
@@ -255,11 +263,40 @@ class AppGUI:
     ###################### Results Screen ######################
     ############################################################
     def window_results(self):
-        res = messagebox.askquestion('열람 확인', str(self.sampleSurvey.view_cost)+' 코인을 지불하고 설문을 열람하시겠습니까?')
-        if res == 'yes':
-            plot_hist(self.sampleSurveyResults)
+        if self.sampleSurvey.buyers.get(self.curUser.name) is None:
+            res = messagebox.askquestion('열람 확인', str(self.sampleSurvey.view_cost)+' 코인을 지불하고 설문을 열람하시겠습니까?')
+            if res == 'yes':
+                # transaction
+                transactions = []
+                t = Transaction(
+                    self.curUser.client,
+                    sampleCreator.client,
+                    self.sampleSurvey.view_cost
+                )
+                self.curUser.update_balance(-self.sampleSurvey.view_cost)
+                t.sign_transaction()
+                transactions.append(t)
+
+                # update balance
+                self.curUser.balance -= self.sampleSurvey.view_cost
+                
+                chain.add_block(transactions)
+                chain.update_chain()
+
+                # add to buyers list
+                self.sampleSurvey.buyers[self.curUser.name] = True
+
+                # request update to server
+                msg = "update_userinfo "+str(self.curUser.balance)
+                self.clientSocket.send(msg.encode())
+                self.clientSocket.recv(1024).decode()
+                
+                # show plot
+                plot_hist(self.sampleSurveyResults)
+            else:
+                pass
         else:
-            pass
+            plot_hist(self.sampleSurveyResults)
 
     ############################################################
     ######################### My Page ##########################

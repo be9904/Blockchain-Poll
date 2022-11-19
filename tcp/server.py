@@ -23,12 +23,12 @@ class LocalServer:
         # define currently logged in id
         self.curUser = None
 
-    def update_userinfo(self):
+    def update_userinfo(self, new_balance):
          # open json as write mode
         user_json = open('./users.json', 'w')
         
         # add new user info
-        self.user_data[self.curUser.name] = self.curUser
+        self.user_data[self.curUser]['balance'] = new_balance
         
         # update json
         json.dump(self.user_data, user_json)
@@ -102,6 +102,10 @@ class LocalServer:
                 break
 
             data = data.split()
+
+            print(data)
+            if data[0] == 'update_userinfo':
+                self.update_userinfo(float(data[1]))
 
             if data == [] or data[0] == 'disconnect':
                 self.isConnected = False
