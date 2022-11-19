@@ -54,7 +54,7 @@ class AppGUI:
             messagebox.showinfo('로그인', packet[1])
         if login_success:
             window.destroy()
-            self.curUser = ast.literal_eval(packet[1])
+            self.curUser = User(BlockchainClient(), ast.literal_eval(packet[1])['name'])
             if username.get() == 'admin':
                 self.isAdmin = True
                 self.window_thumbnails(self.isAdmin)
@@ -127,7 +127,7 @@ class AppGUI:
         transactions = []
         t = Transaction(
             sampleCreator.client,
-            self.curUser['client'],
+            self.curUser.client,
             incentive
         )
         t.sign_transaction()
@@ -168,18 +168,38 @@ class AppGUI:
 
         thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
         t2 = tk.Button(window, image=thumb2).grid(row=1,column=1)
+        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+            .grid(row=1, column=1, padx=(0,210), pady=(175,0))
+        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+            .grid(row=1, column=1, padx=(215,0), pady=(175,0))
 
         thumb3 = PhotoImage(file=r"./gui/thumb3_game.png")
         t3 = tk.Button(window, image=thumb3).grid(row=1, column=2)
+        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+            .grid(row=1, column=2, padx=(0,210), pady=(175,0))
+        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+            .grid(row=1, column=2, padx=(215,0), pady=(175,0))
 
         thumb4 = PhotoImage(file=r"./gui/thumb4_food.png")
         t4 = tk.Button(window, image=thumb4).grid(row=2, column=0)
+        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+            .grid(row=2, column=0, padx=(0,210), pady=(175,0))
+        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+            .grid(row=2, column=0, padx=(215,0), pady=(175,0))
 
         thumb5 = PhotoImage(file=r"./gui/thumb5_character.png")
         t5 = tk.Button(window, image=thumb5).grid(row=2, column=1)
+        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+            .grid(row=2, column=1, padx=(0,210), pady=(175,0))
+        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+            .grid(row=2, column=1, padx=(215,0), pady=(175,0))
 
         thumb6 = PhotoImage(file=r"./gui/thumb6_ott.png")
         t6 = tk.Button(window, image=thumb6).grid(row=2, column=2)
+        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+            .grid(row=2, column=2, padx=(0,210), pady=(175,0))
+        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+            .grid(row=2, column=2, padx=(215,0), pady=(175,0))
 
         window.protocol("WM_DELETE_WINDOW", lambda: self.disconnect(window))
         window.mainloop()
