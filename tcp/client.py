@@ -21,7 +21,7 @@ class LocalClient:
         return 'r ' + id + ' ' + pw
 
     def try_login(self, clientSocket, username, password):
-        isSuccess = True
+        isSuccess = False
 
         clientSocket.send(self.login_msg(username, password).encode())
 
@@ -32,8 +32,8 @@ class LocalClient:
         print(' received message from server')
         print('----------------------')
 
-        if receivedMessage == '가입되어 있지 않은 아이디입니다' or receivedMessage == '비밀번호를 확인해주세요':
-            isSuccess = False
+        if receivedMessage == '로그인 성공':
+            isSuccess = True
 
         return (isSuccess, receivedMessage)
 

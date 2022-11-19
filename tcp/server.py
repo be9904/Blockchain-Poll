@@ -42,8 +42,8 @@ class LocalServer:
         
         # login success
         if self.registered_users[username] == password:
-            self.curUser = self.user_data[username]
-            return (True, json.dumps(self.curUser))
+            self.curUser = username
+            return (True, '로그인 성공')
         
         return (False, '비밀번호를 확인해주세요')
     

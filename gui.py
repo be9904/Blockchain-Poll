@@ -13,8 +13,6 @@ from plot import *
 class AppGUI:
     # constructor
     def __init__(self, isDebugging=False):
-        # set debugging mode
-        self.isDebugging = isDebugging
         # create client instance
         self._client = client.LocalClient(BlockchainClient())
         self.isAdmin = False
@@ -24,6 +22,7 @@ class AppGUI:
         self.clientSocket.connect((self._client.serverIP, self._client.serverPort))
         self.curUser = None
         self.sampleSurvey = survey.CreateSample()
+        self.sampleSurveyResults = []
 
         self.start_app()
 
@@ -57,8 +56,8 @@ class AppGUI:
             messagebox.showinfo('로그인', packet[1])
         if login_success:
             window.destroy()
-            self.curUser = User(BlockchainClient(), ast.literal_eval(packet[1])['name'])
-            if username.get() == 'admin':
+            self.curUser = User(BlockchainClient(), username.get())
+            if self.curUser.name == 'admin':
                 self.isAdmin = True
                 self.window_thumbnails(self.isAdmin)
             else:
@@ -150,8 +149,8 @@ class AppGUI:
         self.sampleSurvey.participants[self.curUser.name] = True
 
         messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
-        if self.isDebugging:
-            self.print_results(self.sampleSurvey)
+    
+        self.save_results(self.sampleSurvey)
         self.window_thumbnails(self.isAdmin)
 
     ############################################################
@@ -178,7 +177,7 @@ class AppGUI:
         tk.Label(window, text = str(self.sampleSurvey.view_cost)+" 코인").grid(row = 1, column = 0, pady=(180,0))
         tk.Button(window, text='설문 참여하기', command=lambda:self.start_survey(window))\
             .grid(row=1, column=0, padx=(0,210), pady=(175,0))
-        tk.Button(window, text='설문 열람하기')\
+        tk.Button(window, text='설문 열람하기', command=self.window_results)\
             .grid(row=1, column=0, padx=(215,0), pady=(175,0))
 
         thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
@@ -225,12 +224,12 @@ class AppGUI:
         window.mainloop()
 
     # for debugging
-    def print_results(self, survey):
-        q = survey.head
+    def save_results(self):
+        q = self.sampleSurvey.head
         while q is not None:
             print("q:", q.userChoice)
+            self.sampleSurveyResults.append(q.userChoice)
             q = q.nextVal
-            print()
 
     ############################################################
     #################### Protocol Functions ####################
@@ -256,7 +255,11 @@ class AppGUI:
     ###################### Results Screen ######################
     ############################################################
     def window_results(self):
-        pass
+        res = messagebox.askquestion('열람 확인', str(self.sampleSurvey.view_cost)+' 코인을 지불하고 설문을 열람하시겠습니까?')
+        if res == 'yes':
+            plot_hist(self.sampleSurveyResults)
+        else:
+            pass
 
     ############################################################
     ######################### My Page ##########################
