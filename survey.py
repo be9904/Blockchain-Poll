@@ -144,28 +144,61 @@ class Survey:
         question.index = index+1
         self.length += 1
 
-if __name__ == "__main__":
-    survey = Survey('Personal Info Survey')
+def CreateSample():
+    survey = Survey('sampleCreator', '고양이 설문')
 
-    q1 = SurveyQuestion('What is your name?')
-    q1.set_choices(['John', 'Joe', 'Sharon', 'Helen'])
-    q2 = SurveyQuestion('How old are you?')
-    q2.set_choices([20, 21, 22, 23, 24, 25])
-    q3 = SurveyQuestion('What is your major?')
-    q4 = SurveyQuestion('What is your hobby?')
-    q5 = SurveyQuestion('Where do you live?')
+    q1 = SurveyQuestion('고양이의 연령대를 선택해주세요.')
+    q1.set_choices([
+        '3~6개월', 
+        '6개월~1살', 
+        '1살~3살', 
+        '3살~6살',
+        '6살~10살',
+        '10살 이상',
+        '모름'])
+    q2 = SurveyQuestion('고양이가 가장 선호하는 형태의 장난감은 무엇인가요?')
+    q2.set_choices([
+        '낚싯대/카샤카샤',
+        '인형',
+        '공',
+        '먹이퍼즐',
+        '터널',
+        '기타'])
+    q3 = SurveyQuestion('하루에 고양이를 장난감으로 놀아주는 횟수는 몇 번인가요?')
+    q3.set_choices([
+        '1번 이하',
+        '2번',
+        '3번',
+        '4번 이상'
+    ])
+    q4 = SurveyQuestion('한 번 고양이와 놀아줄 때 놀이를 몇 분 지속하나요?')
+    q4.set_choices([
+        '10분 미만',
+        '10~20분',
+        '20~30분',
+        '30분 초과'])
+    q5 = SurveyQuestion('고양이가 가장 선호하는 형태의 간식은 무엇인가요?')
+    q5.set_choices([
+        '캔',
+        '츄르',
+        '트릿',
+	    '말린 형태',
+        '기타'
+    ])
+    q6 = SurveyQuestion('고양이에게 간식을 포함한 급여는 하루에 몇 번 인가요?')
+    q6.set_choices([
+        '2번 이하',
+        '3번',
+        '4번',
+	    '5번',
+	    '6번 이상'
+    ])
 
     survey.add_question(q1)
-    survey.print_llist()
-
     survey.add_question(q2)
-    survey.print_llist()
-
     survey.add_question(q3)
-    survey.print_llist()
-
-    survey.add_question(q4, 1)
-    survey.print_llist()
-
-    survey.add_question(q5, 4)
-    survey.print_llist()
+    survey.add_question(q4)
+    survey.add_question(q5)
+    survey.add_question(q6)
+    # survey.print_llist()
+    return survey
