@@ -77,7 +77,7 @@ def myPage():
 
 
 #설문
-def survey1():
+def survey1(window):
 
    # window_video1 = Tk()
     #window_video1.title("설문 제목")
@@ -97,6 +97,8 @@ def survey1():
 
 #저희가 다수의 영상을 필요로 하는 만큼 복잡도를 줄이기 위해
 #그냥 이미지나 gif로 대체하는 것에 대한 의견을 여쭤보고 싶습니다
+
+    window.destroy()
 
     # setup survey
     survey1 = survey.CreateSample()
@@ -120,6 +122,8 @@ def survey1():
 
 def destroy_window(window):
     window.destroy()
+    messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
+    window_thumnails_func()
 
 def load_question(survey, curQ, curWindow):
     if curWindow is not None:
@@ -129,16 +133,25 @@ def load_question(survey, curQ, curWindow):
     window.geometry("500x500+500+200")
     window.title(survey.name)
 
-    tk.Label(window, text=curQ.question).pack()
+    image_frame = tk.Frame(window, relief='groove', bd=2)
+    image_frame.pack(side='left', fill='both', expand=True)
+    image = PhotoImage(file=r"./gui/thumb1_cat.png")
+    tk.Label(image_frame, image=image).pack()
+
+    text_frame = tk.Frame(window, relief='groove', bd=2)
+    text_frame.pack(side='right', fill='both', expand=True)
+    tk.Label(text_frame, text=curQ.question).pack()
+
     q1_var = tk.IntVar()
+    
     for i in range(len(curQ.answer)):
-        tk.Radiobutton(window, text=curQ.answer[i][0], value=i+1, variable=q1_var).pack()
+        tk.Radiobutton(text_frame, text=curQ.answer[i][0], value=i+1, variable=q1_var).pack()
 
     if curQ.nextVal is None:
-        next = tk.Button(window, text="완료", command= lambda: destroy_window(window))
+        next = tk.Button(text_frame, text="완료", command= lambda: destroy_window(window))
         next.pack()
     else:
-        next = tk.Button(window, text="다음", command= lambda: load_question(survey, curQ.nextVal, window))
+        next = tk.Button(text_frame, text="다음", command= lambda: load_question(survey, curQ.nextVal, window))
         next.pack()
 #일단 첫번째 질문 선택 화면까지는 단순히 구현했으나
 #이후로는 영상-질문-영상-질문의 연속이고 앞서 말씀드린것처럼
@@ -163,7 +176,7 @@ def window_thumnails_func():
 
 
         thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
-        t1 = tk.Button(window_thumnails, image=thumb1, command=survey1).grid(row=1, column=0)
+        t1 = tk.Button(window_thumnails, image=thumb1, command=lambda:survey1(window_thumnails)).grid(row=1, column=0)
 
         thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
         t2 = tk.Button(window_thumnails, image=thumb2).grid(row=1,column=1)
