@@ -147,7 +147,7 @@ def load_question(survey, curQ, curWindow):
 
     image_frame = tk.Frame(window, relief='groove', bd=2)
     image_frame.pack(side='left', fill='both', expand=True)
-    i = PhotoImage(file="./gui/thumb1_cat.png")
+    i = PhotoImage(file="./gui/q1image.png")
     t = tk.Label(image_frame, image=i)
     t.image = i
     t.pack()
