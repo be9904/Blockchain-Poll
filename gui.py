@@ -63,8 +63,19 @@ class AppGUI:
         survey1 = survey.CreateSample()
         curQ = survey1.head
 
+        window = Tk()
+        window.geometry("500x500+500+200")
+        window.title(survey1.name)
+
+        image_frame = tk.Frame(window, relief='groove', bd=2)
+        image_frame.pack(side='left', fill='both', expand=True)
+        i = PhotoImage(file="./gui/q1image.png")
+        t = tk.Label(image_frame, image=i)
+        t.image = i
+        t.pack()
+
         # load question
-        window = self.load_question(survey1, curQ, curWindow=None)
+        window = self.load_question(survey1, curQ, window, prevFrame=None)
 
     # for debugging
     def print_results(self, survey):
@@ -77,28 +88,18 @@ class AppGUI:
     def choose_answer(self, question, index):
         question.choose_option(index.get())
 
-    def destroy_window(self, window, survey):
+    def finish_survey(self, window, survey):
         window.destroy()
         messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
         self.print_results(survey)
         self.window_thumnails_func(self.isAdmin)
 
-    def load_question(self, survey, curQ, curWindow):
-        if curWindow is not None:
-            curWindow.destroy()
+    def load_question(self, survey, curQ, curWindow, prevFrame):
+        if prevFrame is not None:
+            prevFrame.pack_forget()
+            prevFrame.destroy()
 
-        window = Tk()
-        window.geometry("500x500+500+200")
-        window.title(survey.name)
-
-        image_frame = tk.Frame(window, relief='groove', bd=2)
-        image_frame.pack(side='left', fill='both', expand=True)
-        i = PhotoImage(file="./gui/q1image.png")
-        t = tk.Label(image_frame, image=i)
-        t.image = i
-        t.pack()
-
-        text_frame = tk.Frame(window, relief='groove', bd=2)
+        text_frame = tk.Frame(curWindow, relief='groove', bd=2)
         text_frame.pack(side='right', fill='both', expand=True)
         tk.Label(text_frame, text=curQ.question).pack()
 
@@ -114,10 +115,10 @@ class AppGUI:
             ).pack()
 
         if curQ.nextVal is None:
-            next = tk.Button(text_frame, text="완료", command= lambda: self.destroy_window(window, survey))
+            next = tk.Button(text_frame, text="완료", command= lambda: self.finish_survey(curWindow, survey))
             next.pack()
         else:
-            next = tk.Button(text_frame, text="다음", command= lambda: self.load_question(survey, curQ.nextVal, window))
+            next = tk.Button(text_frame, text="다음", command= lambda: self.load_question(survey, curQ.nextVal, curWindow, text_frame))
             next.pack()
 
     #홈화면
