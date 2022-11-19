@@ -4,8 +4,6 @@ from tkinter import messagebox
 from socket import *
 from tcp import client
 import survey
-import time
-import ast
 from blockchain import *
 from user import *
 from plot import *
