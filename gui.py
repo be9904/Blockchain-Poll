@@ -30,7 +30,8 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 # connect to server
 clientSocket.connect((_client.serverIP, _client.serverPort))
 
-window_login = Tk()
+window_login = tk.Tk()
+window_login.geometry("300x150+500+200")
 
 user_id, password = StringVar(), StringVar()
 
@@ -48,15 +49,18 @@ def login():
 def login_tcp(username, password):
     # 프레임 내에서 텍스트 변경
     # tk.Label(window_login, text = "TEST").grid(row = 0, column = 0, padx = 10, pady = 10)
-    packet = _client.try_login(clientSocket, username.get(), password.get())
+    login_success = False
 
-    if packet[0]:
-        global exit
-        exit = 1
-        window_login.destroy()
-        clientSocket.close()
-    else:
+    packet = _client.try_login(clientSocket, username.get(), password.get())
+    login_success = packet[0]
+    if not login_success:
         messagebox.showinfo('로그인', packet[1])
+    if login_success:
+        window_login.destroy()
+        if username.get() == 'admin':
+            window_thumnails_func(True)
+        else:
+            window_thumnails_func(False)        
 
 def window_login_func():
     #로그인 창 설정
@@ -67,6 +71,7 @@ def window_login_func():
     tk.Entry(window_login, textvariable = user_id).grid(row = 0, column = 1, padx = 10, pady = 10)
     tk.Entry(window_login, textvariable = password, show='*').grid(row = 1, column = 1, padx = 10, pady = 10)
     tk.Button(window_login, text='로그인', command= lambda: login_tcp(user_id, password)).grid(row = 2, column = 1, padx = 10, pady = 10)
+    window_login.protocol("WM_DELETE_WINDOW", lambda: disconnect(window_login))
     window_login.mainloop()
 
 #마이페이지
@@ -181,46 +186,61 @@ def load_question(survey, curQ, curWindow):
 # 두 과정은 사용자 데이터 구조를 만드신 조원분이 방향성을 알려주신 후 진행하는게 좋을 것 같습니다
 
 #홈화면
-def window_thumnails_func():
+def window_thumnails_func(isAdmin):
+    window_thumnails = tk.Tk()
     
-    global exit
+    window_thumnails.title("홈")
 
-    if exit:
-        window_thumnails = Tk()
-            
-        window_thumnails.title("홈")
+    Button(window_thumnails, text="마이페이지", command = myPage).grid(row=0, column=0, padx=(0,230))
+    if isAdmin:
+        tk.Button(window_thumnails, text="서버 종료", command=lambda:close_server(window_thumnails)) \
+        .grid(
+            row=0,
+            column=2,
+            padx=(245,0)
+        )
+    Button(window_thumnails, text="<<").grid(row=3, column=0, ipadx=75, ipady=5)
+    Button(window_thumnails, text=">>").grid(row=3, column=2, ipadx=75, ipady=5)
 
-        Button(window_thumnails, text="마이페이지", command = myPage).grid(row=0, column=0, ipadx=200, ipady=10)
-        Button(window_thumnails, text="<<").grid(row=3, column=0, ipadx=200, ipady=10)
-        Button(window_thumnails, text=">>").grid(row=3, column=2, ipadx=200, ipady=10)
 
+    thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
+    t1 = tk.Button(window_thumnails, image=thumb1, command=lambda:survey1(window_thumnails)).grid(row=1, column=0)
 
-        thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
-        t1 = tk.Button(window_thumnails, image=thumb1, command=lambda:survey1(window_thumnails)).grid(row=1, column=0)
+    thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
+    t2 = tk.Button(window_thumnails, image=thumb2).grid(row=1,column=1)
 
-        thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
-        t2 = tk.Button(window_thumnails, image=thumb2).grid(row=1,column=1)
+    thumb3 = PhotoImage(file=r"./gui/thumb3_game.png")
+    t3 = tk.Button(window_thumnails, image=thumb3).grid(row=1, column=2)
 
-        thumb3 = PhotoImage(file=r"./gui/thumb3_game.png")
-        t3 = tk.Button(window_thumnails, image=thumb3).grid(row=1, column=2)
+    thumb4 = PhotoImage(file=r"./gui/thumb4_food.png")
+    t4 = tk.Button(window_thumnails, image=thumb4).grid(row=2, column=0)
 
-        thumb4 = PhotoImage(file=r"./gui/thumb4_food.png")
-        t4 = tk.Button(window_thumnails, image=thumb4).grid(row=2, column=0)
+    thumb5 = PhotoImage(file=r"./gui/thumb5_character.png")
+    t5 = tk.Button(window_thumnails, image=thumb5).grid(row=2, column=1)
 
-        thumb5 = PhotoImage(file=r"./gui/thumb5_character.png")
-        t5 = tk.Button(window_thumnails, image=thumb5).grid(row=2, column=1)
+    thumb6 = PhotoImage(file=r"./gui/thumb6_ott.png")
+    t6 = tk.Button(window_thumnails, image=thumb6).grid(row=2, column=2)
 
-        thumb6 = PhotoImage(file=r"./gui/thumb6_ott.png")
-        t6 = tk.Button(window_thumnails, image=thumb6).grid(row=2, column=2)
+    window_thumnails.protocol("WM_DELETE_WINDOW", lambda: disconnect(window_thumnails))
+    window_thumnails.mainloop()
 
-        window_thumnails.mainloop()
-
-    else:
+def disconnect(window):
+    try:
+        clientSocket.send('disconnect'.encode())
+        clientSocket.close()
+    except:
         pass
+    window.destroy()
 
-
+def close_server(window):
+    try:
+        clientSocket.send('close server'.encode())
+        clientSocket.close()
+    except:
+        pass
+    window.destroy()
 
 if __name__ == '__main__':
     window_login_func()
 
-    window_thumnails_func()
+    # window_thumnails_func()

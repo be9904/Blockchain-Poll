@@ -68,16 +68,33 @@ class LocalServer:
             return (True, '가입 성공')
 
     def handle_login(self):
-        while self.curUser is None:
+        while True:
             # receive message from client, log
             data = self.connectionSocket.recv(1024)
             print('message received from', self.addr)
 
             # decode received data
             data = data.decode()
+
+            if data == 'close server':
+                print('closing server... goodbye')
+
+                # set server boolean
+                self.serverOpen = False
+
+                # send reply to client
+                self.connectionSocket.send(return_msg.encode())
+
+                # close socket connection
+                self.connectionSocket.close()
+                break
+
             data = data.split()
 
-            print('msg:', data)
+            if data == [] or data[0] == 'disconnect':
+                self.isConnected = False
+                print(self.addr,'has disconnected')
+                break
 
             # try login and set ret msg
             _trylogin = self.try_login(data[1], data[2])
@@ -234,13 +251,17 @@ class LocalServer:
         print('server is listening')
         print('------------------------------')
 
-        # connect client if none is connected
-        if self.isConnected is False:
-            self.connectionSocket, self.addr = serverSocket.accept()
-            self.isConnected = True
-            print(self.addr,'has connected')
+        while True:
+            if self.serverOpen is False:
+                break
 
-        self.handle_login()
+            # connect client if none is connected
+            if self.isConnected is False:
+                self.connectionSocket, self.addr = serverSocket.accept()
+                self.isConnected = True
+                print(self.addr,'has connected')
+
+            self.handle_login()
 
         self.connectionSocket.close()
 ####################################################################

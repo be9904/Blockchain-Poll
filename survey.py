@@ -201,7 +201,7 @@ def CreateSample():
     survey.add_question(q4)
     survey.add_question(q5)
     survey.add_question(q6)
-    survey.print_llist()
+    # survey.print_llist()
     return survey
 if __name__ == "__main__":
     CreateSample()
