@@ -12,7 +12,9 @@ from plot import *
 
 class AppGUI:
     # constructor
-    def __init__(self):
+    def __init__(self, isDebugging=False):
+        # set debugging mode
+        self.isDebugging = isDebugging
         # create client instance
         self._client = client.LocalClient(BlockchainClient())
         self.isAdmin = False
@@ -21,6 +23,7 @@ class AppGUI:
         # connect to server
         self.clientSocket.connect((self._client.serverIP, self._client.serverPort))
         self.curUser = None
+        self.sampleSurvey = survey.CreateSample()
 
         self.start_app()
 
@@ -64,17 +67,21 @@ class AppGUI:
     ############################################################
     ###################### Survey Screen #######################
     ############################################################
-    def survey1(self, window):
+    def start_survey(self, window):
+        # check if already participated, if already participated, show error message
+        if self.sampleSurvey.participants.get(self.curUser.name):
+            messagebox.showinfo('오류', '이미 참여한 설문입니다')
+            return
+
         window.destroy()
 
         # setup survey
-        survey1 = survey.CreateSample()
-        curQ = survey1.head
+        curQ = self.sampleSurvey.head
 
         # create survey window
         window = Tk()
         window.geometry("500x500+500+200")
-        window.title(survey1.name)
+        window.title(self.sampleSurvey.name)
 
         # set image frame
         image_frame = tk.Frame(window, relief='groove', bd=2)
@@ -85,10 +92,10 @@ class AppGUI:
         t.pack()
 
         # load question
-        window = self.load_question(survey1, curQ, window, prevFrame=None)
+        window = self.load_question(curQ, window, prevFrame=None)
 
     # get questions (recursive)
-    def load_question(self, survey, curQ, curWindow, prevFrame):
+    def load_question(self, curQ, curWindow, prevFrame):
         if prevFrame is not None:
             prevFrame.pack_forget()
             prevFrame.destroy()
@@ -109,10 +116,10 @@ class AppGUI:
             ).pack()
 
         if curQ.nextVal is None:
-            next = tk.Button(text_frame, text="완료", command= lambda: self.finish_survey(curWindow, survey))
+            next = tk.Button(text_frame, text="완료", command= lambda: self.finish_survey(curWindow))
             next.pack()
         else:
-            next = tk.Button(text_frame, text="다음", command= lambda: self.load_question(survey, curQ.nextVal, curWindow, text_frame))
+            next = tk.Button(text_frame, text="다음", command= lambda: self.load_question(curQ.nextVal, curWindow, text_frame))
             next.pack()
 
     ############################################################
@@ -124,7 +131,7 @@ class AppGUI:
     def choose_answer(self, question, index):
         question.choose_option(index.get())
 
-    def finish_survey(self, window, survey):
+    def finish_survey(self, window):
         window.destroy()
 
         transactions = []
@@ -139,8 +146,12 @@ class AppGUI:
         chain.add_block(transactions)
         chain.update_chain()
 
+        # add curuser to participants list
+        self.sampleSurvey.participants[self.curUser.name] = True
+
         messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
-        self.print_results(survey)
+        if self.isDebugging:
+            self.print_results(self.sampleSurvey)
         self.window_thumbnails(self.isAdmin)
 
     ############################################################
@@ -163,7 +174,7 @@ class AppGUI:
         tk.Button(window, text="마이페이지", command =lambda:self.window_mypage(window)).grid(row=0, column=0, padx=(0,230))
 
         thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
-        t1 = tk.Button(window, image=thumb1, command=lambda:self.survey1(window)).grid(row=1, column=0)
+        t1 = tk.Button(window, image=thumb1, command=lambda:self.start_survey(window)).grid(row=1, column=0)
         tk.Button(window, text='설문 참여하기')\
             .grid(row=1, column=0, padx=(0,210), pady=(175,0))
         tk.Button(window, text='설문 열람하기')\
