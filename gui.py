@@ -120,6 +120,18 @@ def survey1(window):
     # next1 = tk.Button(window, text="다음")
     # next1.pack()
 
+# for debugging
+def print_results(survey):
+    q = survey.head
+    while q.nextVal is not None:
+        print("q:", q.answer)
+        q = q.nextVal
+        print()
+
+def choose_answer(question, index):
+    print(index.get())
+    question.choose_option(index.get())
+
 def destroy_window(window):
     window.destroy()
     messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
@@ -145,7 +157,13 @@ def load_question(survey, curQ, curWindow):
     q1_var = tk.IntVar()
     
     for i in range(len(curQ.answer)):
-        tk.Radiobutton(text_frame, text=curQ.answer[i][0], value=i+1, variable=q1_var).pack()
+        tk.Radiobutton(
+            text_frame,
+            text=curQ.answer[i][0],
+            value=i,
+            variable=q1_var,
+            command=lambda:choose_answer(curQ, q1_var)
+        ).pack()
 
     if curQ.nextVal is None:
         next = tk.Button(text_frame, text="완료", command= lambda: destroy_window(window))
