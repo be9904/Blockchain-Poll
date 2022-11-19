@@ -118,6 +118,9 @@ class AppGUI:
     ############################################################
     ################# Survey Command Functions #################
     ############################################################
+    def no_survey(self):
+        messagebox.showinfo('오류', '설문이 아직 준비되지 않았습니다')
+    
     def choose_answer(self, question, index):
         question.choose_option(index.get())
 
@@ -145,7 +148,7 @@ class AppGUI:
     ############################################################
     def window_thumbnails(self, isAdmin):
         window = tk.Tk()
-        
+        window.geometry("+750+400")
         window.title("홈")
 
         if isAdmin:
@@ -161,44 +164,44 @@ class AppGUI:
 
         thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
         t1 = tk.Button(window, image=thumb1, command=lambda:self.survey1(window)).grid(row=1, column=0)
-        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 참여하기')\
             .grid(row=1, column=0, padx=(0,210), pady=(175,0))
-        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 열람하기')\
             .grid(row=1, column=0, padx=(215,0), pady=(175,0))
 
         thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
         t2 = tk.Button(window, image=thumb2).grid(row=1,column=1)
-        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=1, column=1, padx=(0,210), pady=(175,0))
-        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 열람하기', command=self.no_survey)\
             .grid(row=1, column=1, padx=(215,0), pady=(175,0))
 
         thumb3 = PhotoImage(file=r"./gui/thumb3_game.png")
         t3 = tk.Button(window, image=thumb3).grid(row=1, column=2)
-        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=1, column=2, padx=(0,210), pady=(175,0))
-        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 열람하기', command=self.no_survey)\
             .grid(row=1, column=2, padx=(215,0), pady=(175,0))
 
         thumb4 = PhotoImage(file=r"./gui/thumb4_food.png")
         t4 = tk.Button(window, image=thumb4).grid(row=2, column=0)
-        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=2, column=0, padx=(0,210), pady=(175,0))
-        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 열람하기', command=self.no_survey)\
             .grid(row=2, column=0, padx=(215,0), pady=(175,0))
 
         thumb5 = PhotoImage(file=r"./gui/thumb5_character.png")
         t5 = tk.Button(window, image=thumb5).grid(row=2, column=1)
-        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=2, column=1, padx=(0,210), pady=(175,0))
-        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 열람하기', command=self.no_survey)\
             .grid(row=2, column=1, padx=(215,0), pady=(175,0))
 
         thumb6 = PhotoImage(file=r"./gui/thumb6_ott.png")
         t6 = tk.Button(window, image=thumb6).grid(row=2, column=2)
-        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=2, column=2, padx=(0,210), pady=(175,0))
-        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+        tk.Button(window, text='설문 열람하기', command=self.no_survey)\
             .grid(row=2, column=2, padx=(215,0), pady=(175,0))
 
         window.protocol("WM_DELETE_WINDOW", lambda: self.disconnect(window))
