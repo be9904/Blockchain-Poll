@@ -20,6 +20,7 @@ class AppGUI:
         self.clientSocket = socket(AF_INET, SOCK_STREAM)
         # connect to server
         self.clientSocket.connect((self._client.serverIP, self._client.serverPort))
+        self.curUser = None
 
         self.start_app()
 
@@ -53,6 +54,7 @@ class AppGUI:
             messagebox.showinfo('로그인', packet[1])
         if login_success:
             window.destroy()
+            self.curUser = ast.literal_eval(packet[1])
             if username.get() == 'admin':
                 self.isAdmin = True
                 self.window_thumbnails(self.isAdmin)
@@ -121,6 +123,19 @@ class AppGUI:
 
     def finish_survey(self, window, survey):
         window.destroy()
+
+        transactions = []
+        t = Transaction(
+            sampleCreator.client,
+            self.curUser['client'],
+            incentive
+        )
+        t.sign_transaction()
+        transactions.append(t)
+        
+        chain.add_block(transactions)
+        chain.update_chain()
+
         messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
         self.print_results(survey)
         self.window_thumbnails(self.isAdmin)
@@ -146,6 +161,10 @@ class AppGUI:
 
         thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
         t1 = tk.Button(window, image=thumb1, command=lambda:self.survey1(window)).grid(row=1, column=0)
+        tk.Button(window, text='설문 참여하기', command=lambda:self.survey1(window))\
+            .grid(row=1, column=0, padx=(0,210), pady=(175,0))
+        tk.Button(window, text='설문 열람하기', command=lambda:self.survey1(window))\
+            .grid(row=1, column=0, padx=(215,0), pady=(175,0))
 
         thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
         t2 = tk.Button(window, image=thumb2).grid(row=1,column=1)

@@ -3,6 +3,7 @@ import collections
 import time
 import json
 import Crypto
+from json import JSONEncoder
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
@@ -128,6 +129,10 @@ class BlockchainClient():
     @property
     def identity(self):
         return binascii.hexlify(self._public_key.export_key(format='DER')).decode('ascii')
+
+class BlockchainClientEncoder(JSONEncoder):
+    def default(self, o):
+        return o.__dict__
 
 # define a transaction
 class Transaction():
