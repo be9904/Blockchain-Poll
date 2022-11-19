@@ -81,7 +81,7 @@ class AppGUI:
 
         # create survey window
         window = Tk()
-        window.geometry("500x500+500+200")
+        window.geometry("700x300+500+200")
         window.title(self.sampleSurvey.name)
 
         # set image frame
@@ -103,7 +103,7 @@ class AppGUI:
 
         text_frame = tk.Frame(curWindow, relief='groove', bd=2)
         text_frame.pack(side='right', fill='both', expand=True)
-        tk.Label(text_frame, text=curQ.question).pack()
+        tk.Label(text_frame, text=curQ.question, width=100).pack()
 
         q1_var = tk.IntVar()
         
@@ -113,8 +113,9 @@ class AppGUI:
                 text=curQ.answer[i][0],
                 value=i,
                 variable=q1_var,
-                command=lambda:self.choose_answer(curQ, q1_var)
-            ).pack()
+                command=lambda:self.choose_answer(curQ, q1_var),
+                pady=5
+            ).pack(anchor=W)
 
         if curQ.nextVal is None:
             next = tk.Button(text_frame, text="완료", command= lambda: self.finish_survey(curWindow))
