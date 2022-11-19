@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter as tk
 from tkinter import messagebox
+from socket import *
 from tcp import client
 import time
 #from PIL import ImageTk
@@ -21,7 +22,12 @@ import time
 
 #다른 좋은 방식이 있으시면 알려주시고 최대한 에러를 해결할 방법을 찾아보겠습니다.
 
+# create client instance
 _client = client.LocalClient()
+# create client socket
+clientSocket = socket(AF_INET, SOCK_STREAM)
+# connect to server
+clientSocket.connect((_client.serverIP, _client.serverPort))
 
 window_login = Tk()
 
@@ -39,12 +45,13 @@ def login():
         messagebox.showinfo('로그인', '로그인 실패')
 
 def login_tcp(username, password):
-    packet = _client.try_login(username.get(), password.get())
+    packet = _client.try_login(clientSocket, username.get(), password.get())
 
     if packet[0]:
         global exit
         exit = 1
         window_login.destroy()
+        clientSocket.close()
     else:
         messagebox.showinfo('로그인', packet[1])
 

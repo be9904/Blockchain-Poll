@@ -68,22 +68,23 @@ class LocalServer:
             return (True, '가입 성공')
 
     def handle_login(self):
-        # receive message from client, log
-        data = self.connectionSocket.recv(1024)
-        print('message received from', self.addr)
+        while self.curUser is None:
+            # receive message from client, log
+            data = self.connectionSocket.recv(1024)
+            print('message received from', self.addr)
 
-        # decode received data
-        data = data.decode()
-        data = data.split()
+            # decode received data
+            data = data.decode()
+            data = data.split()
 
-        print('msg:', data)
+            print('msg:', data)
 
-        # try login and set ret msg
-        _trylogin = self.try_login(data[1], data[2])
-        return_msg = _trylogin[1]
+            # try login and set ret msg
+            _trylogin = self.try_login(data[1], data[2])
+            return_msg = _trylogin[1]
 
-        self.connectionSocket.send(return_msg.encode())
-        print('------------------------------')
+            self.connectionSocket.send(return_msg.encode())
+            print('------------------------------')
 
     # handle client request
     def handle_request(self):
@@ -215,7 +216,7 @@ class LocalServer:
             # if server close requested, terminate program
             if self.serverOpen is False:
                 return
-                
+
     def server_login(self):
         # create socket
         serverSocket = socket(AF_INET, SOCK_STREAM)

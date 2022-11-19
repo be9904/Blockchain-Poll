@@ -19,25 +19,17 @@ class LocalClient:
     def register_msg(self, id, pw):
         return 'r ' + id + ' ' + pw
 
-    def try_login(self, username, password):
+    def try_login(self, clientSocket, username, password):
         isSuccess = False
-
-        # create client socket
-        clientSocket = socket(AF_INET, SOCK_STREAM)
-
-        # connect to server
-        clientSocket.connect((self.serverIP, self.serverPort))
 
         clientSocket.send(self.login_msg(username, password).encode())
 
         receivedMessage = clientSocket.recv(1024).decode()
-
+        
         # log server reply
         print('----------------------')
         print(' <Server>', receivedMessage)
         print('----------------------')
-        
-        clientSocket.close()
 
         if receivedMessage == '로그인 성공':
             isSuccess = True
