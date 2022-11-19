@@ -75,7 +75,7 @@ def plot_hist(user_survey_result):
 
     #############################################
 
-    res = []
+    res, my_ans = [], []
     fig, axx = plt.subplots(nrows=1, ncols=6)
 
     for i in range(len(user_survey_result)):
@@ -84,6 +84,7 @@ def plot_hist(user_survey_result):
         #print(curr_ans)
         answers[i][curr_ans] = answers[i][curr_ans]+1 # increase hit num
         #print(choices[i], answers[i])
+        my_ans.append(choices[i][curr_ans])
 
         #res.append(dict(zip(choices[i], answers[i])))
         res = dict(zip(choices[i], answers[i]))
@@ -99,7 +100,10 @@ def plot_hist(user_survey_result):
         ax.tick_params(axis='x', rotation=90)
         ax.set_title(serveys[i])
 
-    plt.title('Survey result')
+    fig.suptitle(f'SERVEY RESULTS:\nYour answers were: {my_ans}')
     plt.tight_layout()
     #plt.savefig('./survey_result.png')
     plt.show()
+
+if __name__ == '__main__':
+    plot_hist([0,0,0,0,0,0])
