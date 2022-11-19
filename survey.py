@@ -22,6 +22,7 @@ class SurveyQuestion:
         
         # choose option
         self.answer[index] = (self.answer[index][0], True)
+        self.userChoice = index
         
     def set_next(self, node):
         # if type(node) is not SurveyQuestion:

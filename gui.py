@@ -124,17 +124,17 @@ def survey1(window):
 def print_results(survey):
     q = survey.head
     while q.nextVal is not None:
-        print("q:", q.answer)
+        print("q:", q.userChoice)
         q = q.nextVal
         print()
 
 def choose_answer(question, index):
-    print(index.get())
     question.choose_option(index.get())
 
-def destroy_window(window):
+def destroy_window(window, survey):
     window.destroy()
     messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
+    # print_results(survey)
     window_thumnails_func()
 
 def load_question(survey, curQ, curWindow):
@@ -166,7 +166,7 @@ def load_question(survey, curQ, curWindow):
         ).pack()
 
     if curQ.nextVal is None:
-        next = tk.Button(text_frame, text="완료", command= lambda: destroy_window(window))
+        next = tk.Button(text_frame, text="완료", command= lambda: destroy_window(window, survey))
         next.pack()
     else:
         next = tk.Button(text_frame, text="다음", command= lambda: load_question(survey, curQ.nextVal, window))
