@@ -25,6 +25,7 @@ import time
 
 # create client instance
 _client = client.LocalClient()
+isAdmin = False
 # create client socket
 clientSocket = socket(AF_INET, SOCK_STREAM)
 # connect to server
@@ -40,8 +41,6 @@ exit = 0
 def login():
     if user_id.get() == "id" and password.get() == "pw":
         print("로그인 성공")
-        global exit
-        exit = 1
         window_login.destroy() 
     else:
         messagebox.showinfo('로그인', '로그인 실패')
@@ -58,9 +57,10 @@ def login_tcp(username, password):
     if login_success:
         window_login.destroy()
         if username.get() == 'admin':
-            window_thumnails_func(True)
+            isAdmin = True
+            window_thumnails_func(isAdmin)
         else:
-            window_thumnails_func(False)        
+            window_thumnails_func(isAdmin)        
 
 def window_login_func():
     #로그인 창 설정
@@ -128,7 +128,7 @@ def survey1(window):
 # for debugging
 def print_results(survey):
     q = survey.head
-    while q.nextVal is not None:
+    while q is not None:
         print("q:", q.userChoice)
         q = q.nextVal
         print()
@@ -140,7 +140,7 @@ def destroy_window(window, survey):
     window.destroy()
     messagebox.showinfo('설문 완료', '설문을 완료하여 코인이 지급되었습니다!')
     print_results(survey)
-    window_thumnails_func()
+    window_thumnails_func(isAdmin)
 
 def load_question(survey, curQ, curWindow):
     if curWindow is not None:
