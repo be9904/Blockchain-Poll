@@ -174,14 +174,16 @@ class AppGUI:
         tk.Button(window, text="마이페이지", command =lambda:self.window_mypage(window)).grid(row=0, column=0, padx=(0,230))
 
         thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
-        t1 = tk.Button(window, image=thumb1, command=lambda:self.start_survey(window)).grid(row=1, column=0)
-        tk.Button(window, text='설문 참여하기')\
+        t1 = tk.Button(window, image=thumb1).grid(row=1, column=0)
+        tk.Label(window, text = str(self.sampleSurvey.view_cost)+" 코인").grid(row = 1, column = 0, pady=(180,0))
+        tk.Button(window, text='설문 참여하기', command=lambda:self.start_survey(window))\
             .grid(row=1, column=0, padx=(0,210), pady=(175,0))
         tk.Button(window, text='설문 열람하기')\
             .grid(row=1, column=0, padx=(215,0), pady=(175,0))
 
         thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
         t2 = tk.Button(window, image=thumb2).grid(row=1,column=1)
+        tk.Label(window, text = "15 코인").grid(row = 1, column = 1, pady=(180,0))
         tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=1, column=1, padx=(0,210), pady=(175,0))
         tk.Button(window, text='설문 열람하기', command=self.no_survey)\
@@ -189,6 +191,7 @@ class AppGUI:
 
         thumb3 = PhotoImage(file=r"./gui/thumb3_game.png")
         t3 = tk.Button(window, image=thumb3).grid(row=1, column=2)
+        tk.Label(window, text = "10 코인").grid(row = 1, column = 2, pady=(180,0))
         tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=1, column=2, padx=(0,210), pady=(175,0))
         tk.Button(window, text='설문 열람하기', command=self.no_survey)\
@@ -196,6 +199,7 @@ class AppGUI:
 
         thumb4 = PhotoImage(file=r"./gui/thumb4_food.png")
         t4 = tk.Button(window, image=thumb4).grid(row=2, column=0)
+        tk.Label(window, text = "25 코인").grid(row = 2, column = 0, pady=(180,0))
         tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=2, column=0, padx=(0,210), pady=(175,0))
         tk.Button(window, text='설문 열람하기', command=self.no_survey)\
@@ -203,6 +207,7 @@ class AppGUI:
 
         thumb5 = PhotoImage(file=r"./gui/thumb5_character.png")
         t5 = tk.Button(window, image=thumb5).grid(row=2, column=1)
+        tk.Label(window, text = "5 코인").grid(row = 2, column = 1, pady=(180,0))
         tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=2, column=1, padx=(0,210), pady=(175,0))
         tk.Button(window, text='설문 열람하기', command=self.no_survey)\
@@ -210,6 +215,7 @@ class AppGUI:
 
         thumb6 = PhotoImage(file=r"./gui/thumb6_ott.png")
         t6 = tk.Button(window, image=thumb6).grid(row=2, column=2)
+        tk.Label(window, text = "20 코인").grid(row = 2, column = 2, pady=(180,0))
         tk.Button(window, text='설문 참여하기', command=self.no_survey)\
             .grid(row=2, column=2, padx=(0,210), pady=(175,0))
         tk.Button(window, text='설문 열람하기', command=self.no_survey)\
