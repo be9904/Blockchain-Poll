@@ -26,6 +26,7 @@ class AppGUI:
         self.sampleSurveyResults = []
         # user info
         self.userBalance = None
+        self.userTransactions = []
 
         self.start_app()
 
@@ -145,6 +146,7 @@ class AppGUI:
         self.curUser.update_balance(incentive)
         t.sign_transaction()
         transactions.append(t)
+        self.userTransactions.append(t)
         
         chain.add_block(transactions)
         chain.update_chain()
@@ -181,7 +183,7 @@ class AppGUI:
             )
         tk.Button(window, text="<<").grid(row=3, column=0, ipadx=75, ipady=5)
         tk.Button(window, text=">>").grid(row=3, column=2, ipadx=75, ipady=5)
-        tk.Button(window, text="마이페이지", command =lambda:self.window_mypage(window)).grid(row=0, column=0, padx=(0,230))
+        tk.Button(window, text="마이페이지", command =self.window_mypage).grid(row=0, column=0, padx=(0,230))
         self.update_balance_ui(window)
 
         thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
@@ -242,7 +244,7 @@ class AppGUI:
     def save_results(self):
         q = self.sampleSurvey.head
         while q is not None:
-            print("q:", q.userChoice)
+            # print("q:", q.userChoice)
             self.sampleSurveyResults.append(q.userChoice)
             q = q.nextVal
 
@@ -284,6 +286,7 @@ class AppGUI:
                 self.update_balance_ui(window)
                 t.sign_transaction()
                 transactions.append(t)
+                self.userTransactions.append(t)
                 
                 chain.add_block(transactions)
                 chain.update_chain()
@@ -306,20 +309,40 @@ class AppGUI:
     ############################################################
     ######################### My Page ##########################
     ############################################################
-    def window_mypage(self, parentWindow):
-        window = tk.Toplevel(parentWindow)
-        window.title("마이페이지")
-        window.geometry("500x500+500+200")
+    def window_mypage(self):
+        # window = tk.Toplevel(parentWindow)
+        # window.title("마이페이지")
+        # window.geometry("500x500+500+200")
 
-        scrollbar = Scrollbar(window)
-        scrollbar.pack( side = RIGHT, fill = Y )
+        window = Tk()
+        window.title('거래내역')
+        window.geometry("600x400")
 
-        mylist = Listbox(window, yscrollcommand = scrollbar.set )
-        for line in range(100):
-            mylist.insert(END, "This is line number " + str(line))
+        if len(self.userTransactions) == 0:
+            tk.Label(window, text = "거래내역이 없습니다.").grid(row = 0, column = 1, padx=(250,0), pady=(180,0))
+            return
 
-        mylist.pack( side = LEFT, fill = BOTH )
-        scrollbar.config( command = mylist.yview )
+        canvas = Canvas(window)
+        vsb = Scrollbar(window, orient="vertical", command=canvas.yview)
+
+        window.grid_rowconfigure(0, weight=1)
+        window.grid_columnconfigure(0, weight=1)
+        canvas.configure(yscrollcommand=vsb.set)
+        canvas.grid(row=0, column=0, sticky="nsew")
+        vsb.grid(row=0, column=1, sticky="ns")
+
+        for i in range(len(self.userTransactions)):
+            Button(canvas, text=self.userTransactions[i].txn_hash[:14]+"...", command=lambda:self.showinfo(self.userTransactions[i]))\
+                .grid(row=i, ipadx=235)
+
+    def showinfo(self, tinfo):
+        messagebox.showinfo('거래내역 조회', 
+            'From: ' + tinfo.sender.identity +
+            '\n\nTo: ' + tinfo.recipient.identity +
+            '\n\nvalue: ' + str(tinfo.value) + 
+            '\n\nTransaction Hash: ' + tinfo.txn_hash + 
+            '\n\nTimestamp: ' + str(tinfo.time))
+            
 
 if __name__ == '__main__':
     chain = Blockchain()
