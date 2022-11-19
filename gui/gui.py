@@ -132,5 +132,5 @@ thumb6 = PhotoImage(file=r"thumb6_ott.png")
 t6 = tk.Button(window_thumnails, image=thumb6).grid(row=2, column=2)
 
 
-
+window_thumbnails.mainloop()
 
