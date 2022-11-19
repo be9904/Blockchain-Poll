@@ -32,7 +32,6 @@ class LocalServer:
         
         # update json
         json.dump(self.user_data, user_json)
-        print('updated user info')
 
     # login check function
     def try_login(self, username, password):   
@@ -106,6 +105,7 @@ class LocalServer:
             if data[0] == 'update_userinfo':
                 self.update_userinfo(float(data[1]))
                 self.connectionSocket.send(data[1].encode())
+                print('------------------------------')
                 continue
 
             if data == [] or data[0] == 'disconnect':
