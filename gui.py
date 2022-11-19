@@ -35,8 +35,6 @@ def login():
         global exit
         exit = 1
         window_login.destroy() 
-        
-        
     else:
         messagebox.showinfo('로그인', '로그인 실패')
 
@@ -44,7 +42,6 @@ def login_tcp(username, password):
     packet = _client.try_login(username.get(), password.get())
 
     if packet[0]:
-        print("로그인 성공")
         global exit
         exit = 1
         window_login.destroy()
@@ -59,7 +56,6 @@ def window_login_func():
     tk.Label(window_login, text = "Password : ").grid(row = 1, column = 0, padx = 10, pady = 10)
     tk.Entry(window_login, textvariable = user_id).grid(row = 0, column = 1, padx = 10, pady = 10)
     tk.Entry(window_login, textvariable = password, show='*').grid(row = 1, column = 1, padx = 10, pady = 10)
-    # tk.Button(window_login, text = "로그인", command = login).grid(row = 2, column = 1, padx = 10, pady = 10)
     tk.Button(window_login, text='로그인', command= lambda: login_tcp(user_id, password)).grid(row = 2, column = 1, padx = 10, pady = 10)
     window_login.mainloop()
 

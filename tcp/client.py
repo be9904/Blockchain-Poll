@@ -22,9 +22,6 @@ class LocalClient:
     def try_login(self, username, password):
         isSuccess = False
 
-        print(type(username), type(password))
-        print(username, password)
-
         # create client socket
         clientSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -32,7 +29,6 @@ class LocalClient:
         clientSocket.connect((self.serverIP, self.serverPort))
 
         clientSocket.send(self.login_msg(username, password).encode())
-        print(self.login_msg(username, password).encode())
 
         receivedMessage = clientSocket.recv(1024).decode()
 

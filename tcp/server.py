@@ -67,6 +67,24 @@ class LocalServer:
             self.curUser = username
             return (True, '가입 성공')
 
+    def handle_login(self):
+        # receive message from client, log
+        data = self.connectionSocket.recv(1024)
+        print('message received from', self.addr)
+
+        # decode received data
+        data = data.decode()
+        data = data.split()
+
+        print('msg:', data)
+
+        # try login and set ret msg
+        _trylogin = self.try_login(data[1], data[2])
+        return_msg = _trylogin[1]
+
+        self.connectionSocket.send(return_msg.encode())
+        print('------------------------------')
+
     # handle client request
     def handle_request(self):
         # run server
@@ -197,7 +215,31 @@ class LocalServer:
             # if server close requested, terminate program
             if self.serverOpen is False:
                 return
+                
+    def server_login(self):
+        # create socket
+        serverSocket = socket(AF_INET, SOCK_STREAM)
 
+        # exception handling
+        serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        print('socket created')
+
+        # bind
+        serverSocket.bind((self.serverHost, self.serverPort))
+        print("socket binded to %s" %(self.serverPort))
+
+        # listen
+        serverSocket.listen()
+        print('server is listening')
+        print('------------------------------')
+
+        # connect client if none is connected
+        if self.isConnected is False:
+            self.connectionSocket, self.addr = serverSocket.accept()
+            self.isConnected = True
+            print(self.addr,'has connected')
+
+        self.handle_login()
 ####################################################################
 ####################################################################
 ####################################################################
@@ -206,4 +248,4 @@ class LocalServer:
 
 if __name__ == "__main__":
     server = LocalServer('./registered-users.json')
-    server.server_main()
+    server.server_login()
