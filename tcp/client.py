@@ -2,10 +2,11 @@ from socket import *
 
 class LocalClient:
     # constructor
-    def __init__(self):
+    def __init__(self, bclient):
         # set server ip and port
         self.serverIP = '127.0.0.1'      # local host
         self.serverPort = 12000
+        self.bclient = bclient
 
     ####################################################################
     ######################## Define Functions ##########################
