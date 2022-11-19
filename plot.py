@@ -101,5 +101,5 @@ def plot_hist(user_survey_result):
 
     plt.title('Survey result')
     plt.tight_layout()
-    plt.savefig('./survey_result.png')
+    #plt.savefig('./survey_result.png')
     plt.show()
