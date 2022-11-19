@@ -21,8 +21,11 @@ class AppGUI:
         # connect to server
         self.clientSocket.connect((self._client.serverIP, self._client.serverPort))
         self.curUser = None
+        # sample survey
         self.sampleSurvey = survey.CreateSample()
         self.sampleSurveyResults = []
+        # user info
+        self.userBalance = None
 
         self.start_app()
 
@@ -139,6 +142,7 @@ class AppGUI:
             self.curUser.client,
             incentive
         )
+        self.curUser.update_balance(incentive)
         t.sign_transaction()
         transactions.append(t)
         
@@ -146,7 +150,6 @@ class AppGUI:
         chain.update_chain()
         
         # update balance
-        self.curUser.balance += incentive
 
         # add curuser to participants list
         self.sampleSurvey.participants[self.curUser.name] = True
@@ -158,7 +161,7 @@ class AppGUI:
         self.clientSocket.send(msg.encode())
         self.clientSocket.recv(1024).decode()
     
-        self.save_results(self.sampleSurvey)
+        self.save_results()
         self.window_thumbnails(self.isAdmin)
 
     ############################################################
@@ -179,13 +182,14 @@ class AppGUI:
         tk.Button(window, text="<<").grid(row=3, column=0, ipadx=75, ipady=5)
         tk.Button(window, text=">>").grid(row=3, column=2, ipadx=75, ipady=5)
         tk.Button(window, text="마이페이지", command =lambda:self.window_mypage(window)).grid(row=0, column=0, padx=(0,230))
+        self.update_balance_ui(window)
 
         thumb1 = PhotoImage(file=r"./gui/thumb1_cat.png")
         t1 = tk.Button(window, image=thumb1).grid(row=1, column=0)
         tk.Label(window, text = str(self.sampleSurvey.view_cost)+" 코인").grid(row = 1, column = 0, pady=(180,0))
         tk.Button(window, text='설문 참여하기', command=lambda:self.start_survey(window))\
             .grid(row=1, column=0, padx=(0,210), pady=(175,0))
-        tk.Button(window, text='설문 열람하기', command=self.window_results)\
+        tk.Button(window, text='설문 열람하기', command=lambda:self.window_results(window))\
             .grid(row=1, column=0, padx=(215,0), pady=(175,0))
 
         thumb2 = PhotoImage(file=r"./gui/thumb2_mbti.png")
@@ -231,6 +235,9 @@ class AppGUI:
         window.protocol("WM_DELETE_WINDOW", lambda: self.disconnect(window))
         window.mainloop()
 
+    def update_balance_ui(self, window):
+        self.userBalance = tk.Label(window, text="보유 코인: "+str(self.curUser.balance)).grid(row=0, column=1)
+
     # for debugging
     def save_results(self):
         q = self.sampleSurvey.head
@@ -262,7 +269,7 @@ class AppGUI:
     ############################################################
     ###################### Results Screen ######################
     ############################################################
-    def window_results(self):
+    def window_results(self, window):
         if self.sampleSurvey.buyers.get(self.curUser.name) is None:
             res = messagebox.askquestion('열람 확인', str(self.sampleSurvey.view_cost)+' 코인을 지불하고 설문을 열람하시겠습니까?')
             if res == 'yes':
@@ -274,11 +281,9 @@ class AppGUI:
                     self.sampleSurvey.view_cost
                 )
                 self.curUser.update_balance(-self.sampleSurvey.view_cost)
+                self.update_balance_ui(window)
                 t.sign_transaction()
                 transactions.append(t)
-
-                # update balance
-                self.curUser.balance -= self.sampleSurvey.view_cost
                 
                 chain.add_block(transactions)
                 chain.update_chain()

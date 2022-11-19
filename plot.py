@@ -7,6 +7,8 @@ def plot_hist(user_survey_result):
 
     #user_survey_result = [0,0,0,0,0]
     ############### dummy data ###############
+    if len(user_survey_result) == 0:
+        user_survey_result = [0,0,0,0,0,0]
 
     q1 = ('Please select the\n age of your cat.')
     q1_choices = ([
