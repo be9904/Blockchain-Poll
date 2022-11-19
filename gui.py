@@ -331,17 +331,20 @@ class AppGUI:
         canvas.grid(row=0, column=0, sticky="nsew")
         vsb.grid(row=0, column=1, sticky="ns")
 
-        for i in range(len(self.userTransactions)):
-            Button(canvas, text=self.userTransactions[i].txn_hash[:14]+"...", command=lambda:self.showinfo(self.userTransactions[i]))\
-                .grid(row=i, ipadx=235)
+        row_num = 0
 
-    def showinfo(self, tinfo):
+        for t in self.userTransactions:
+            tk.Button(canvas, text=t.txn_hash[:14]+"...", command=lambda t=t:self.showinfo(t))\
+                .grid(row=row_num, ipadx=235)
+            row_num += 1
+
+    def showinfo(self, t):
         messagebox.showinfo('거래내역 조회', 
-            'From: ' + tinfo.sender.identity +
-            '\n\nTo: ' + tinfo.recipient.identity +
-            '\n\nvalue: ' + str(tinfo.value) + 
-            '\n\nTransaction Hash: ' + tinfo.txn_hash + 
-            '\n\nTimestamp: ' + str(tinfo.time))
+            'From: ' + t.sender.identity +
+            '\n\nTo: ' + t.recipient.identity +
+            '\n\nvalue: ' + str(t.value) + 
+            '\n\nTransaction Hash: ' + t.txn_hash + 
+            '\n\nTimestamp: ' + str(t.time))
             
 
 if __name__ == '__main__':
